@@ -1,0 +1,21 @@
+
+.page-splitter {
+    display: flex;
+}
+
+
+
+.page-splitter .left {
+    flex-grow: 2;
+    flex-shrink: 1;
+    flex-basis: 600px;
+}
+
+
+.page-splitter .right {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 300px;
+
+    background-color: red;
+}

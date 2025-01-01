@@ -1,42 +1,79 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 * {
-  box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+html {
+  font-family: sans-serif;
+  height: 100%;
+  width: 100%;
+  background: #2d3236;
+  color: white;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+nav {
+  height: 60px;
+  background: #35393d
+}
+
+nav > h1 {
+  padding: 0 16px;
+  font-size: 14pt;
+  line-height: 60px;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+}
+
+#content-wrapper {
+  padding: 16px;
+}
+
+#page-title {
+  font-size: 14pt;
+}
+
+
+#meal-plan-days {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.day h1 {
+  font-size: 13pt;
+}
+
+.meal {
+  border-radius: 5px;
+  background-color: #212325;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+}
+
+.meal img {
+  height: 65px;
+  width: 65px;
+}
+
+.meal .desc {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.meal .desc h2 {
+  font-size: 16pt;
 }
