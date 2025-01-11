@@ -1,21 +1,143 @@
 
 .page-splitter {
-    display: flex;
+  display: flex;
+  gap: 16px;
+  max-height: calc(100% - var(--page-title-height));
+  overflow-y: hidden;
 }
-
-
 
 .page-splitter .left {
-    flex-grow: 2;
-    flex-shrink: 1;
-    flex-basis: 600px;
+  flex-grow: 2;
+  flex-shrink: 1;
+  flex-basis: 600px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.page-splitter .right {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 300px;
+  overflow-y: auto;
+  padding-right: 8px;
 }
 
 
-.page-splitter .right {
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: 300px;
 
-    background-color: red;
+#meal-plan-days {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.day h1 {
+  font-size: 13pt;
+}
+
+.meal {
+  border-radius: 5px;
+  background-color: #212325;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.meal:hover {
+  background: #313941;
+}
+
+.meal img.meal-preview {
+  height: 65px;
+  width: 65px;
+}
+
+.meal .desc {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.meal .desc h2 {
+  font-size: 16pt;
+}
+
+.meal .desc h3 {
+  font-size: 12pt;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.meal .refresh-button {
+  padding: 8px;
+  box-sizing: content-box;
+  border-radius: 5px;
+}
+
+.meal .refresh-button:hover {
+  background: rgba(0,0,0,0.2);
+
+}
+
+
+#meal-plans {
+  padding: 12px;
+}
+
+#meal-plans h1 {
+  font-size: 16pt;
+}
+
+.meal-plan-list {
+  color: rgba(255, 255, 255, 0.9);
+  padding-top: 12px;
+}
+
+.meal-plan-list > hr {
+  border-color: rgba(255, 255, 255, 0.6);
+  border-style: solid;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.meal-plan {
+  padding: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.meal-plan:hover {
+  background: #35393d;
+}
+
+.meal-plan > h2 {
+  font-size: 16pt;
+}
+
+.meal-plan > h3 {
+  font-size: 12pt;
+  color: rgba(255, 255,255, 0.6);
+}
+
+#new-meal-plan-button {
+  height: 61px;
+  padding: 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.6);
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#new-meal-plan-button:hover {
+  background: rgba(255, 255, 255, 0.05);
 }

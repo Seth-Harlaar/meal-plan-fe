@@ -1,9 +1,11 @@
-import Image from "next/image";
-import React from "react";
+'use client'
+
+import React, { useContext } from "react";
 import PageTitle from "./components/PageTitle";
 
 // css
 import './page.css'
+import { ModalContext } from "./providers/ModalProvider";
 
 export default function Home() {
   // DUMMY DATA ONLY
@@ -40,10 +42,24 @@ export default function Home() {
         breakfast: 'Eggs',
         dinner: 'Lasagna'
       }
+    },
+    {
+      day: "Wednesday",
+      meals: {
+        breakfast: 'Beans on Toast',
+        dinner: 'Soup'
+      }
+    },
+    {
+      day: "Thursday",
+      meals: {
+        breakfast: 'Eggs',
+        lunch: 'Pizza pockets'
+      }
     }
   ];
 
-  const meals: MealPlan[] = [
+  const mealPlans: MealPlan[] = [
     {
       title: "Meal Plan 1",
       weekFor: "01/01/25",
@@ -61,31 +77,52 @@ export default function Home() {
     },
   ];
 
+  // get modal context
+  const modalData = useContext(ModalContext);
+
+  function handleRefreshClick(){
+    modalData.openModal({component: <>asdf</>});
+  }
+
   return (
     <>
       <PageTitle titleText="Homepage - Meal plans list"/>
       <div className="page-splitter">
         {/* Left side */}
-        <div id="meal-plan-days left">
+        <div id="meal-plan-days" className="left">
           {days.map((day, index) => {
             return <div key={index} className='day'>
               <h1>{day.day}</h1>
               {Object.keys(day.meals).map((meal, index2) => {
                 return <div key={index2} className="meal">
-                  <img src='https://www.onceuponachef.com/images/2024/01/Grilled-Cheese-6-1200x1800.jpg'/>
+                  <img className="meal-preview" src='https://www.onceuponachef.com/images/2024/01/Grilled-Cheese-6-1200x1800.jpg'/>
                   <div className="desc">
-                    <h2 className="title">{meal}</h2>
-                    <div>{day.meals[meal]}</div>
+                    <h2 className="title">{day.meals[meal]}</h2>
+                    <h3>{meal}</h3>
                   </div>
+                  <div className="flex-spacer"></div>
+                  <img className="icon refresh-button" src="/icons/refresh.svg" onClick={handleRefreshClick}/>
                 </div>
                 })}
             </div>
           })}
         </div>
         {/* Right side */}
-        <div className="right">
-          <div>
-            <h2>Meal Plans</h2>            
+        <div id="meal-plans" className="right">
+          <h1>Meal Plans</h1>
+          <div className="meal-plan-list">
+            {mealPlans.map((mealPlan, index) => {
+              return <React.Fragment key={index}>
+                <div className="meal-plan"key={index}>
+                  <h2>{mealPlan.weekFor}</h2>
+                  <h3>{mealPlan.mealTypes.join(" · ")}</h3>
+                </div>
+                <hr/>
+              </React.Fragment>
+            })}
+            <div id="new-meal-plan-button">
+              <div></div>
+            </div>
           </div>
         </div>
       </div>

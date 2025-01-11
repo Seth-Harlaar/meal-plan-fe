@@ -1,0 +1,104 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+@import url("https://fonts.gstatic.com");
+@import url("https://fonts.googleapis.com");
+
+
+:root {
+  --page-title-height: 30px;
+}
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  font-family: "Lato", serif;
+  font-size: 16pt;
+  height: 100%;
+  width: 100%;
+  background: #2d3236;
+  color: white;
+}
+
+h1 {
+  font-family: none;
+}
+
+h1, h2, h3, h4 {
+  font-weight: normal;
+}
+
+nav {
+  height: 60px;
+  background: #35393d
+}
+
+nav > h1 {
+  padding: 0 16px;
+  font-size: 14pt;
+  line-height: 60px;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+}
+
+#content-wrapper {
+  height: calc(100% - 60px);
+  padding: 16px;
+  overflow-y: auto;
+}
+
+#page-title h1 {
+  font-size: 16pt;
+  height: var(--page-title-height);
+}
+
+.flex-spacer {
+  flex: 1;
+}
+
+/* icons */
+.icon {
+  height: 20pt;
+  width: 20pt;
+}
+
+
+/* modal */
+#modal-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0, 0.4);
+  z-index: 1000;
+}
+
+
+#modal-exit {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  height: 32px;
+  width: 32px;
+  background: white;
+  cursor: pointer;
+}
+
+#modal {
+  height: 65%;
+  width: 65%;
+  background: white;
+  border-radius: 5px;
+  padding: 16px;
+}
