@@ -4,6 +4,13 @@
 
 
 :root {
+  /* brekapoitns */
+  --brk-xsml: 375px;
+  --brk-sml: 500px;
+  --brk-md: 800px;
+  --brk-lg: 1200px;
+  --brk-xl: 1400px;
+
   --page-title-height: 30px;
 }
 
@@ -49,6 +56,8 @@ body {
 }
 
 #content-wrapper {
+  max-width: 1800px;
+  margin: auto;
   height: calc(100% - 60px);
   padding: 16px;
   overflow-y: auto;
@@ -67,38 +76,4 @@ body {
 .icon {
   height: 20pt;
   width: 20pt;
-}
-
-
-/* modal */
-#modal-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(0,0,0, 0.4);
-  z-index: 1000;
-}
-
-
-#modal-exit {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  height: 32px;
-  width: 32px;
-  background: white;
-  cursor: pointer;
-}
-
-#modal {
-  height: 65%;
-  width: 65%;
-  background: white;
-  border-radius: 5px;
-  padding: 16px;
 }

@@ -11,11 +11,11 @@ const ModalContext = createContext<ModalContextType>({
     closeModal: () => {},
 });
 
-interface ModalContextType {
-    modalVisible: boolean;
-    modalChildren: React.ReactNode;
-    openModal: ({component}: {component: React.ReactNode}) => void;
-    closeModal: () => void;
+type ModalContextType = {
+  modalVisible: boolean;
+  modalChildren: React.ReactNode;
+  openModal: ({component}: {component: React.ReactNode}) => void;
+  closeModal: () => void;
 }
 
 function ModalProvider({children}: {children: React.ReactNode}){

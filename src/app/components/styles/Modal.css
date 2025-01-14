@@ -1,0 +1,43 @@
+
+
+#modal-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0, 0.4);
+  z-index: 1000;
+}
+
+#modal-exit {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  height: 32px;
+  width: 32px;
+  background: black ;
+  cursor: pointer;
+}
+
+#modal {
+  height: 65%;
+  width: 65%;
+  background: white;
+  color: black;
+  border-radius: 5px;
+  padding: 16px;
+}
+
+@media only screen and (max-width: 800px){
+  
+  #modal {
+    height: 100%;
+    width: 100%;
+    border-radius: 0;
+  }
+
+}
