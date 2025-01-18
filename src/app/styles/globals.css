@@ -39,17 +39,6 @@ h1, h2, h3, h4 {
   font-weight: normal;
 }
 
-nav {
-  height: 60px;
-  background: #35393d
-}
-
-nav > h1 {
-  padding: 0 16px;
-  font-size: 14pt;
-  line-height: 60px;
-}
-
 body {
   height: 100%;
   width: 100%;

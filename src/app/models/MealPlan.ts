@@ -3,7 +3,7 @@ import { FullMeal, Meal, PartialMeal } from "./Meal";
 import { z } from 'zod';
 import { DaysOfWeek } from "./enums/DaysOfTheWeek";
 import { MealTime } from "./enums/MealTime";
-import { Database, Zods } from "./db";
+import { Database, Zods } from "../api/db";
 
 
 

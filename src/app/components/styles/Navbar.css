@@ -1,0 +1,13 @@
+
+nav {
+  height: 60px;
+  background: #35393d;
+  display: flex;
+  gap: 16px;
+}
+
+nav > h1 {
+  padding: 0 16px;
+  font-size: 14pt;
+  line-height: 60px;
+}

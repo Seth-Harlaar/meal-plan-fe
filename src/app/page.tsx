@@ -1,11 +1,10 @@
 import React from "react";
 import PageTitle from "./components/PageTitle";
 import MealListing from "./components/MealListing";
+import { MealPlan } from "./models/MealPlan";
 
 // css
 import './page.css'
-import { MealPlan } from "./models/MealPlan";
-import { Meal } from "./models/Meal";
 
 export default async function Home() {
   const daysOfWeek: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
