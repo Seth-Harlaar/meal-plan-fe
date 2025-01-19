@@ -3,7 +3,6 @@ import PageTitle from "./components/PageTitle";
 import MealListing from "./components/MealListing";
 import { MealPlan } from "./models/MealPlan";
 
-// css
 import './page.css'
 
 export default async function Home() {

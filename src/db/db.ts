@@ -1,6 +1,6 @@
 import { createPool, DatabasePool, sql } from 'slonik';
 import { z } from 'zod';
-import { Meal } from '../models/Meal';
+import { Meal } from '../app/models/Meal';
 
 export class Database {
   private static pool: DatabasePool;

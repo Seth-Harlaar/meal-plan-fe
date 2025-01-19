@@ -1,0 +1,26 @@
+
+/* buttons */
+
+a:has(.button){
+  text-decoration: none;
+  color: var(--text-color-primary);
+}
+
+.button {
+  border-radius: var(--border-radius-small);
+  background: rgba(0,0,0, 0.1);
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: rgba(0,0,0, 0.2);
+}
+
+
+
+
+/* links */
+.link {
+  cursor: pointer;
+}
