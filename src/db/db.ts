@@ -1,17 +1,16 @@
 import { createPool, DatabasePool, sql } from 'slonik';
 import { z } from 'zod';
-import { Meal } from '../app/models/Meal';
+import { Meal } from '../models/Meal';
 
 export class Database {
   private static pool: DatabasePool;
 
   static async getPool() {
     if (!Database.pool) {
-      Database.pool = await createPool(`postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@localhost:5432/mealPlanner`);
+      Database.pool = await createPool(`postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@localhost:5432/meal-planner`);
     }
     return Database.pool;
   }
-
 }
 
 
@@ -66,6 +65,14 @@ export class Zods {
     user_id: z.number(),
     name: z.string(),
   });
+
+  static userObj = z.object({
+    id: z.number(),
+    first_name: z.string(),
+    last_name: z.string(),
+    email: z.string(),
+    google_id: z.string(),
+  })
 }
 
 

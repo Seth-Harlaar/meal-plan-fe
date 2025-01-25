@@ -1,7 +1,7 @@
 import React from "react";
-import PageTitle from "./components/PageTitle";
-import MealListing from "./components/MealListing";
-import { MealPlan } from "./models/MealPlan";
+import PageTitle from "../components/PageTitle";
+import MealListing from "../components/MealListing";
+import { MealPlan } from "../models/MealPlan";
 
 import './page.css'
 

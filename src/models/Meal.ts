@@ -1,7 +1,7 @@
 import { sql } from "slonik";
 import { Food, FoodType } from "./Food";
 import { MealPlan } from "./MealPlan";
-import { Database, Zods } from "../../db/db";
+import { Database, Zods } from "../db/db";
 
 // The basis of the meal
 export class Meal {

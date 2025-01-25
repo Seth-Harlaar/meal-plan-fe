@@ -13,7 +13,7 @@ export default function Navbar(){
     </div>
     <div className="flex-spacer"></div>
     <div className="right">
-      <a href='/login'><span className='button'>Login</span></a>
+      <a href='/api/login'><span className='button'>Login</span></a>
     </div>
   </nav>
 }
