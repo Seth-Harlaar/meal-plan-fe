@@ -6,6 +6,10 @@ import { z } from 'zod';
 export class UserSearchCriteria {
   GoogleId: string | null = null;
   UserId: string | null = null;
+
+  constructor(init?: Partial<UserSearchCriteria>){
+    Object.assign(this, init);
+  }
 }
 
 export class User {
@@ -48,7 +52,7 @@ export class User {
     }
   }
 
-  public static async GetUser({SearchCriteria}: {SearchCriteria: UserSearchCriteria}): Promise<User | null> {
+  public static async GetUser(SearchCriteria: UserSearchCriteria): Promise<User | null> {
     const pool = await Database.getPool();
 
     try {
@@ -57,18 +61,19 @@ export class User {
             WHERE google_id = ${SearchCriteria.GoogleId} 
           LIMIT 1;
         `);
-  
+
       let NewUser = new User(user.first_name, user.last_name, user.email, user.google_id);
       NewUser.UserId = user.id;
   
       return NewUser;
 
-    } catch {
+    } catch(e) {
+      console.log('error finding user', e);
       return null;
     }
   }
 
-  public static async GetUsers({SearchCriteria}: {SearchCriteria: UserSearchCriteria}): Promise<User[]>  {
+  public static async GetUsers(SearchCriteria: UserSearchCriteria): Promise<User[]>  {
 
 
 

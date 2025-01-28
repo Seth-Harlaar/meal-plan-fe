@@ -9,7 +9,8 @@ export async function GET() {
   
   // generate a url that asks permissions for Blogger and Google Calendar scopes
   const scopes = [
-    'profile'
+    'profile',
+    'email'
   ];
   
   const url = oauth2Client.generateAuthUrl({

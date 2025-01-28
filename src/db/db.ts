@@ -7,7 +7,7 @@ export class Database {
 
   static async getPool() {
     if (!Database.pool) {
-      Database.pool = await createPool(`postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@localhost:5432/meal-planner`);
+      Database.pool = await createPool(`postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@localhost:5432/mealPlanner`);
     }
     return Database.pool;
   }
@@ -66,6 +66,7 @@ export class Zods {
     name: z.string(),
   });
 
+  // users
   static userObj = z.object({
     id: z.number(),
     first_name: z.string(),

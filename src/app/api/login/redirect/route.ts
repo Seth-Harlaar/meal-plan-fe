@@ -13,41 +13,41 @@ export async function GET(request: NextRequest) {
     const params = request.nextUrl.searchParams;
     const code = params.get('code')
   
-    const {tokens} = await oauth2Client.getToken(code)
-    oauth2Client.setCredentials(tokens);
-  
-    const idToken = tokens.id_token;
-    const decodedToken = decodeJwt(idToken);
-    console.log(decodedToken);
+    try {
+    const {tokens} = await oauth2Client.getToken(code);
 
-    const userProfile = {
-      googleId: decodedToken.sub,
-      email: decodedToken.email,
-      name: decodedToken.name,
-      picture: decodedToken.picture,
-    };
-    
-    // set user profile cookie in res
-    let res = NextResponse.redirect(`${process.env.BASE_URL}/api/login/signin-auth0`);
-    res.cookies.set('user-profile', JSON.stringify(userProfile), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-      path: '/',
-      sameSite: "strict",
-    });
+      const ticket = await oauth2Client.verifyIdToken({
+        idToken: tokens.id_token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+
+      const payload = ticket.getPayload();
+
+      console.log(payload);
+
+
+      let res = NextResponse.redirect(`${process.env.BASE_URL}/home`);
+    } catch {
+
+      let res = NextResponse.redirect(`${process.env.BASE_URL}/404`);
+    }
+
+
 
     // create user obj and save
-    let userLoggingIn = await User.GetUser(new UserSearchCriteria().GoogleId = userProfile.googleId);
+    let userLoggingIn = await User.GetUser(new UserSearchCriteria({GoogleId: userProfile.googleId}));
     console.log('userLoggingIn', userLoggingIn);
     if(userLoggingIn){
       return res;
 
     } else {
-      userLoggingIn = new User(userProfile.name, userProfile.name, userProfile.email, userProfile.googleId);
-      userLoggingIn.SaveUser();
-      console.log('created new', userLoggingIn);
-      if(userLoggingIn.UserId > 0){
+      let names = userProfile.name.split(' ');
+      let firstName = names[0];
+      let lastName = names[names.length - 1];
+      let createdUser = new User(firstName, lastName, userProfile.email, userProfile.googleId);
+      await createdUser.SaveUser();
+      console.log('created new', createdUser);
+      if(createdUser.UserId > 0){
         let res = NextResponse.redirect(`${process.env.BASE_URL}/home`);
         return res;
       }
@@ -58,12 +58,4 @@ export async function GET(request: NextRequest) {
     console.log(error);
     return Response.redirect(`${process.env.BASE_URL}/404`);
   }
-}
-
-
-function decodeJwt(idToken: any) {
-  const payload = idToken.split('.')[1];
-  const buffer = Buffer.from(payload, 'base64');
-  const decoded = JSON.parse(buffer.toString('utf8'));
-  return decoded;
 }
