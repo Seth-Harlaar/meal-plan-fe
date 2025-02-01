@@ -1,7 +1,9 @@
 import { User, UserSearchCriteria } from "@/models/User";
 import { RESPONSE_LIMIT_DEFAULT } from "next/dist/server/api-utils";
 import { NextRequest, NextResponse } from "next/server";
+import { Jwt } from "jsonwebtoken";
 const {google} = require('googleapis');
+const jwt = require('jsonwebtoken');
 
 export async function GET(request: NextRequest) {
   const oauth2Client = new google.auth.OAuth2(
@@ -25,30 +27,24 @@ export async function GET(request: NextRequest) {
     console.log(payload);
 
     // find or create user
-    let userLoggingIn = await User.GetUser(new UserSearchCriteria({GoogleId: payload['sub']}));
-    console.log('userLoggingIn', userLoggingIn);
+    let user = await User.GetUser(new UserSearchCriteria({GoogleId: payload['sub']}));
+    console.log('user loggin in:', user);
 
-    if(!userLoggingIn){
-      let createdUser = new User(payload['given_name'], payload['family_name'], payload['email'], payload['sub']);
-      await createdUser.SaveUser();
-      console.log('created new', createdUser);
-      if(createdUser.UserId > 0){ 
+    if(!user){
+      user = new User(payload['given_name'], payload['family_name'], payload['email'], payload['sub']);
+      await user.SaveUser();
+      console.log('created new', user);
+      if(user.UserId > 0){ 
         throw new Error('Could not create new user');
       }
     }
 
     // creat jwt
-    var x = 
+    var token = jwt.sign({userSub: user.GoogleId}, process.env.JWT_SECRET);
+    console.log('jwt token', token);
 
     let res = NextResponse.redirect(`${process.env.BASE_URL}/home`);
-    res.cookies.set('user-profile', JSON.stringify(userProfile), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-      path: '/',
-      sameSite: "strict",
-    });
-
+    res.cookies.set('auth_token', token);
     return res;
 
   } catch (error) {
