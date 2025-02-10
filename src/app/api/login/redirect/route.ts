@@ -1,9 +1,7 @@
 import { User, UserSearchCriteria } from "@/models/User";
-import { RESPONSE_LIMIT_DEFAULT } from "next/dist/server/api-utils";
 import { NextRequest, NextResponse } from "next/server";
-import { Jwt } from "jsonwebtoken";
 const {google} = require('googleapis');
-const jwt = require('jsonwebtoken');
+import * as jose from 'jose'
 
 export async function GET(request: NextRequest) {
   const oauth2Client = new google.auth.OAuth2(
@@ -39,9 +37,14 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // creat jwt
-    var token = jwt.sign({userSub: user.GoogleId}, process.env.JWT_SECRET);
-    console.log('jwt token', token);
+    const encodedKey = (new TextEncoder()).encode(process.env.JWT_SECRET);
+
+    const token = await new jose.SignJWT({userSub: user.GoogleId}) // details to  encode in the token
+        .setProtectedHeader({ alg: 'HS256' }) // algorithm
+        .setIssuedAt()
+        .setExpirationTime("1 hour") // token expiration time, e.g., "1 day"
+        .sign(encodedKey); // secretKey generated from previous step
+    console.log(token); // log token to console
 
     let res = NextResponse.redirect(`${process.env.BASE_URL}/home`);
     res.cookies.set('auth_token', token);

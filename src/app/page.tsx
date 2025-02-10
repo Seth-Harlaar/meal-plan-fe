@@ -4,10 +4,15 @@ import MealListing from "../components/MealListing";
 import { MealPlan } from "../models/MealPlan";
 
 import './page.css'
+import { getSession } from "./api/auth/[...nextauth]/auth";
 
 export default async function Home() {
   const daysOfWeek: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const mealPlans = await MealPlan.GetMealPlans([5]);
+
+  const session = await getSession(); 
+
+  console.log(session);
 
   return (
     <>
