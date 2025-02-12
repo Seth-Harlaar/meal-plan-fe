@@ -1,7 +1,6 @@
 import { User, UserSearchCriteria } from "@/models/User";
 import { RESPONSE_LIMIT_DEFAULT } from "next/dist/server/api-utils";
 import { NextRequest, NextResponse } from "next/server";
-import { Jwt } from "jsonwebtoken";
 const {google} = require('googleapis');
 const jwt = require('jsonwebtoken');
 
@@ -34,17 +33,20 @@ export async function GET(request: NextRequest) {
       user = new User(payload['given_name'], payload['family_name'], payload['email'], payload['sub']);
       await user.SaveUser();
       console.log('created new', user);
-      if(user.UserId > 0){ 
+      if(user.UserId <= 0){
         throw new Error('Could not create new user');
       }
     }
 
     // creat jwt
     var token = jwt.sign({userSub: user.GoogleId}, process.env.JWT_SECRET);
-    console.log('jwt token', token);
 
-    let res = NextResponse.redirect(`${process.env.BASE_URL}/home`);
-    res.cookies.set('auth_token', token);
+    let res = NextResponse.redirect(`${process.env.BASE_URL}/auth-callback`);
+    res.cookies.set("auth_token", token, {
+      httpOnly: true,
+      sameSite: "strict",
+      path: "/",
+    });
     return res;
 
   } catch (error) {

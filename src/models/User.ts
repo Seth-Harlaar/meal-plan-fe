@@ -67,8 +67,7 @@ export class User {
   
       return NewUser;
 
-    } catch(e) {
-      console.log('error finding user', e);
+    } catch {
       return null;
     }
   }

@@ -2,12 +2,16 @@ import React from "react";
 import PageTitle from "../components/PageTitle";
 import MealListing from "../components/MealListing";
 import { MealPlan } from "../models/MealPlan";
+import { cookies } from "next/headers";
 
 import './page.css'
+import { GetCurrentUser, getSession } from "@/auth/auth";
 
 export default async function Home() {
   const daysOfWeek: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const mealPlans = await MealPlan.GetMealPlans([5]);
+
+  console.log(await GetCurrentUser());
 
   return (
     <>
