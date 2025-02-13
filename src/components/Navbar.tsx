@@ -1,9 +1,9 @@
-
+import { GetCurrentUser } from '@/auth/auth'
 import './styles/Navbar.css'
 
+export default async function Navbar(){
 
-
-export default function Navbar(){
+  const user  =  await GetCurrentUser();
   return <nav>
     <div className="left">
       <span>Meal Planner</span>
@@ -13,7 +13,10 @@ export default function Navbar(){
     </div>
     <div className="flex-spacer"></div>
     <div className="right">
-      <a href='/api/login'><span className='button'>Login</span></a>
+      {user == null 
+        ? <a href='/api/login'><span className='button'>Login</span></a>
+        : null
+      }
     </div>
   </nav>
 }
