@@ -10,10 +10,8 @@ import { GetCurrentUser, getSession } from "@/auth/auth";
 export default async function Home() {
   const user = await GetCurrentUser();
 
-  
   const daysOfWeek: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const mealPlans = await MealPlan.GetMealPlans([5]);
-
 
   if(user){
     return (
@@ -53,9 +51,9 @@ export default async function Home() {
                   <hr/>
                 </React.Fragment>
               })}
-              <div id="new-meal-plan-button">
-                <div></div>
-              </div>
+              <a id="new-meal-plan-button" href="/mealplan/new">
+                <div>New Meal Plan</div>
+              </a>
             </div>
           </div>
         </div>

@@ -3,7 +3,8 @@ import './styles/Navbar.css'
 
 export default async function Navbar(){
 
-  const user  =  await GetCurrentUser();
+  const user = await GetCurrentUser();
+
   return <nav>
     <div className="left">
       <span>Meal Planner</span>
@@ -15,7 +16,7 @@ export default async function Navbar(){
     <div className="right">
       {user == null 
         ? <a href='/api/login'><span className='button'>Login</span></a>
-        : null
+        : <a href='/api/logout'><span className='button'>Logout</span></a>
       }
     </div>
   </nav>

@@ -7,13 +7,13 @@ export default function AuthCallback() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const res = await fetch("/api/auth-check"); // API route to check the auth cookie
-      console.log(res);
-      if (res.ok) {
-        router.replace("/"); // Redirect home once the cookie is available
-      } else {
-        setTimeout(checkAuth, 500); // Retry after 500ms
-      }
+      var res = await fetch("/api/auth-check");
+      while(!res.ok){
+        res = await fetch("/api/auth-check");
+        console.log(res);
+      } 
+
+      router.replace("/"); // Redirect home once the cookie is available
     };
 
     checkAuth();

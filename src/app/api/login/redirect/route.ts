@@ -44,8 +44,10 @@ export async function GET(request: NextRequest) {
     let res = NextResponse.redirect(`${process.env.BASE_URL}/auth-callback`);
     res.cookies.set("auth_token", token, {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
       path: "/",
+      maxAge: 60 * 60 * 12,
     });
     return res;
 

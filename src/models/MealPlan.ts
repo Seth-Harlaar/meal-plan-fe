@@ -123,7 +123,6 @@ export class MealPlan {
   }
 
   public static async GenerateMealPlan(): Promise<MealPlan> {
-    const pool = await Database.getPool();
     let NewMealPlan: MealPlan = new MealPlan();
 
     // meal for each day - dinners only right now
@@ -137,25 +136,33 @@ export class MealPlan {
     // get this or use user input
     const mealPlanName = MealPlan.genericMealPlanName();
 
+
+    return NewMealPlan;
+  }
+
+  // save meal plan
+  public async SaveChanges(): Promise<void> {
+    const pool = await Database.getPool();
+    
     // save meal plan to db
     let Results = await pool.one(sql.type(z.object({id: z.number()}))`
       INSERT INTO meal_plans (user_id, name)
-        VALUES (1, ${mealPlanName})
+        VALUES (1, ${this.Name})
       RETURNING id;
     `);
 
-    NewMealPlan.MealPlanId = Results.id;
+    this.MealPlanId = Results.id;
     
-    if(NewMealPlan.MealPlanId == 0){
+    if(this.MealPlanId == 0){
       throw new Error('Could not generate new mealplan');
     }
 
     const colTypes = ['int4','int4', 'bool', 'int4', 'int4'];
 
     // create the rows
-    const MealValues = NewMealPlan.Days.flatMap(d => {
+    const MealValues = this.Days.flatMap(d => {
       return Array.from(d.Meals.entries()).map(([mealTime, meal]) => {
-        return [NewMealPlan.MealPlanId, meal?.mealId, meal instanceof FullMeal, d.Day, mealTime];
+        return [this.MealPlanId, meal?.mealId, meal instanceof FullMeal, d.Day, mealTime];
       });
     });
 
@@ -171,11 +178,7 @@ export class MealPlan {
     } catch (error) {
       console.log('Error while inserting into meal_plan_meals', error);
     }
-
-    return NewMealPlan;
   }
-
-  
 
 
 
