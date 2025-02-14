@@ -2,19 +2,60 @@ import { sql } from "slonik";
 import { Food, FoodType } from "./Food";
 import { MealPlan } from "./MealPlan";
 import { Database, Zods } from "../db/db";
+import { DaysOfWeek } from "./enums/DaysOfTheWeek";
+import { MealTime } from "./enums/MealTime";
 
 // The basis of the meal
 export class Meal {
-  mealId: number;
-  name: string = "";
-  prepTime: number = 0;
-  // recipe: string;
+  MealId: number = 0;
+  MealSubId: number = 0;
+  IsFullMeal: boolean = false;
+  DayFor: DaysOfWeek = DaysOfWeek.Sunday;
+  TimeFor: MealTime = MealTime.DINNER;
 
-  constructor(mealId: number, name: string, prepTime: number){
-    this.mealId = mealId;
-    this.name = name;
-    this.prepTime = prepTime;
+  static async GetMeals(InputCriteria: MealSearchCriteria): Promise<Meal[]>{
+    const DefaultCriteria = new MealSearchCriteria();
+    const Criteria = {...DefaultCriteria, ...InputCriteria };
+    const pool = await Database.getPool();
+    
+    let query = sql.type(Zods.mealPlanMeal)`
+      SELECT *
+      FROM public.meal_plan_meals
+      WHERE 1=1
+ 
+      ${ // meal plan ids
+        (Criteria.MealPLanIdList.length > 0) 
+        ? sql.fragment`AND meal_plan_id IN (${sql.join(Criteria.MealPLanIdList, sql.fragment`, `)})`
+        : sql.fragment``}
+
+      ${ // user ids
+        (Criteria.MealIdList.length > 0)
+        ? sql.fragment`AND meal_id IN (${sql.join(Criteria.MealIdList, sql.fragment`, `)})`
+        : sql.fragment``}
+
+      ORDER BY id;
+    `;
+
+    try {
+      const results = await pool.any(query);
+      let Meals = results.map(meal => Object.assign(
+        new Meal(),
+        {
+          MealId: meal.id,
+          MealSubId: meal.meal_id,
+          IsFullMeal: meal.is_full_meal,
+          DayFor: meal.day_for as DaysOfWeek,
+          TimeFor: meal.time_for as MealTime
+        }
+      ));
+      return Meals;
+      
+    } catch (error) {
+      console.log('Error while searching for meal plans', error);
+      return [];
+    }
   }
+
 
 
   // * * * * * * * * * * * * * * * * * * * * * *
@@ -23,53 +64,56 @@ export class Meal {
 
   // function that takes in list of food ids
   // and gets random meal that don't already have
-  static async GetRandomMeal(MealPlan: MealPlan): Promise<Meal> {
+  static async GetRandomMeal(MealPlan: MealPlan): Promise<void> {
     const pool = await Database.getPool();
 
-    const Meals = MealPlan.Days.flatMap(d => Array.from(d.Meals.values()));
+    // const Meals = MealPlan.Days.flatMap(d => Array.from(d.Meals.values()));
 
-    const partialMeals = Meals.filter(x => x instanceof PartialMeal);
-    const fullMeals = Meals.filter(x => x instanceof FullMeal);
+    // const partialMeals = Meals.filter(x => x instanceof PartialMeal);
+    // const fullMeals = Meals.filter(x => x instanceof FullMeal);
 
-    const makeFullMeal = getRandomInt(8) > 2;
-    if(makeFullMeal){
-      const randomMeal = await pool.one(
-        sql.type(Zods.fullMealObj)`SELECT * FROM full_meals
-            ${fullMeals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(fullMeals.map(x => x.mealId), sql.fragment`, `)})` : sql.unsafe``}
-          ORDER BY RANDOM()
-          LIMIT 1;
-        `);
+    // const makeFullMeal = getRandomInt(8) > 2;
+    // if(makeFullMeal){
+    //   const randomMeal = await pool.one(
+    //     sql.type(Zods.fullMealObj)`SELECT * FROM full_meals
+    //         ${fullMeals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(fullMeals.map(x => x.mealId), sql.fragment`, `)})` : sql.unsafe``}
+    //       ORDER BY RANDOM()
+    //       LIMIT 1;
+    //     `);
 
-      return new FullMeal(randomMeal.id, randomMeal.name, randomMeal.prep_time, randomMeal.id);
+    //   return new FullMeal(randomMeal.id, randomMeal.name, randomMeal.prep_time, randomMeal.id);
 
-    } else {
-      // get random partial meal
-      const randomMeal = await pool.one(
-        sql.type(Zods.partialMealObj)`SELECT * FROM partial_meals
-            ${partialMeals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(partialMeals.map(x => x.mealId), sql.fragment`, `)})` : sql.unsafe``}
-          ORDER BY RANDOM()
-          LIMIT 1;
-        `);
+    // } else {
+    //   // get random partial meal
+    //   const randomMeal = await pool.one(
+    //     sql.type(Zods.partialMealObj)`SELECT * FROM partial_meals
+    //         ${partialMeals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(partialMeals.map(x => x.mealId), sql.fragment`, `)})` : sql.unsafe``}
+    //       ORDER BY RANDOM()
+    //       LIMIT 1;
+    //     `);
 
-      // get the food
-      const foods = await pool.any(
-        sql.type(Zods.foodObj)`
-          SELECT 
-            partial_meals_foods.partial_meal_id, food_id,
-            food_type, name, prep_time
-          FROM public.partial_meals_foods
-          RIGHT JOIN foods ON partial_meals_foods.food_id = foods.id
-            WHERE partial_meals_foods.id IS NOT NULL
-            AND partial_meal_id = ${randomMeal.id}
-          ORDER BY partial_meals_foods.id ASC;
-        `);
+    //   // get the food
+    //   const foods = await pool.any(
+    //     sql.type(Zods.foodObj)`
+    //       SELECT 
+    //         partial_meals_foods.partial_meal_id, food_id,
+    //         food_type, name, prep_time
+    //       FROM public.partial_meals_foods
+    //       RIGHT JOIN foods ON partial_meals_foods.food_id = foods.id
+    //         WHERE partial_meals_foods.id IS NOT NULL
+    //         AND partial_meal_id = ${randomMeal.id}
+    //       ORDER BY partial_meals_foods.id ASC;
+    //     `);
         
-      var FoodList: Food[] = foods.map(f => new Food(f.id, f.type, f.name, f.prep_time));
-      const prepTime = FoodList.map(x => x.prepTime).reduce((prev, cur) => prev + cur);
-      const name = FoodList.map(f => f.name).join(', ');
+    //   var FoodList: Food[] = foods.map(f => new Food(f.id, f.type, f.name, f.prep_time));
+    //   const prepTime = FoodList.map(x => x.prepTime).reduce((prev, cur) => prev + cur);
+    //   const name = FoodList.map(f => f.name).join(', ');
 
-      return new PartialMeal(randomMeal.id, name, prepTime, FoodList);
-    }
+      // return new PartialMeal(randomMeal.id, name, prepTime, FoodList);
+      // return new PartialMeal(1, 1, "a", 1, []);
+    // }
+
+
   }
 
 
@@ -165,74 +209,74 @@ export class Meal {
 
 
 
-export class PartialMeal extends Meal {
-  foodList: Food[] = [];
+// export class PartialMeal extends Meal {
+//   foodList: Food[] = [];
 
-  constructor(mealId: number, name: string, prepTime: number, foodList: Food[]) {
-    super(mealId, name, prepTime);
-    this.foodList = foodList;
-  }
+//   constructor(mealId: number, mealSubId:number, name: string, prepTime: number, foodList: Food[]) {
+//     super(mealId, mealSubId, name, prepTime);
+//     this.foodList = foodList;
+//   }
 
-  static async GetMeals(MealIds: number[]): Promise<Meal[]>{
-    if(MealIds.length <= 0){
-      return [];
-    }
+//   static async GetMeals(MealIds: number[]): Promise<Meal[]>{
+//     if(MealIds.length <= 0){
+//       return [];
+//     }
 
-    const pool = await Database.getPool();
+//     const pool = await Database.getPool();
 
-    let Meals: Meal[] = [];
+//     let Meals: Meal[] = [];
 
-    for(let i = 0; i < MealIds.length; i++){
-      const foods = await pool.many(
-        sql.type(Zods.foodObj)`
-          SELECT 
-            partial_meals_foods.partial_meal_id, food_id,
-            food_type, name, prep_time
-          FROM public.partial_meals_foods
-          RIGHT JOIN foods ON partial_meals_foods.food_id = foods.id
-            WHERE partial_meals_foods.id IS NOT NULL
-            AND partial_meal_id = ${MealIds[i]}
-          ORDER BY partial_meals_foods.id ASC;
-        `
-      );
+//     for(let i = 0; i < MealIds.length; i++){
+//       const foods = await pool.many(
+//         sql.type(Zods.foodObj)`
+//           SELECT 
+//             partial_meals_foods.partial_meal_id, food_id,
+//             food_type, name, prep_time
+//           FROM public.partial_meals_foods
+//           RIGHT JOIN foods ON partial_meals_foods.food_id = foods.id
+//             WHERE partial_meals_foods.id IS NOT NULL
+//             AND partial_meal_id = ${MealIds[i]}
+//           ORDER BY partial_meals_foods.id ASC;
+//         `
+//       );
   
-      var FoodList: Food[] = foods.map(f => new Food(f.id, f.type, f.name, f.prep_time));
-      const prepTime = FoodList.map(x => x.prepTime).reduce((prev, cur) => prev + cur);
-      const name = FoodList.map(f => f.name).join(', ');
+//       var FoodList: Food[] = foods.map(f => new Food(f.id, f.type, f.name, f.prep_time));
+//       const prepTime = FoodList.map(x => x.prepTime).reduce((prev, cur) => prev + cur);
+//       const name = FoodList.map(f => f.name).join(', ');
 
-      Meals.push(new PartialMeal(MealIds[i], name, prepTime, FoodList));
-    }
+//       Meals.push(new PartialMeal(MealIds[i], 1, name, prepTime, FoodList));
+//     }
 
-    return Meals;
-  }
-}
+//     return Meals;
+//   }
+// }
 
 
-export class FullMeal extends Meal {
-  foodId: number;
+// export class FullMeal extends Meal {
+//   foodId: number;
 
-  constructor(mealId: number, name: string, prepTime: number, foodId: number) {
-    super(mealId, name, prepTime);
-    this.foodId = foodId;
-  }
+//   constructor(mealId: number, name: string, prepTime: number, foodId: number) {
+//     super(mealId, name, prepTime);
+//     this.foodId = foodId;
+//   }
 
-  static async GetMeals(MealIds: number[]): Promise<Meal[]>{
-    if(MealIds.length <= 0){
-      return [];
-    }
+//   static async GetMeals(MealIds: number[]): Promise<Meal[]>{
+//     if(MealIds.length <= 0){
+//       return [];
+//     }
 
-    const pool = await Database.getPool();
+//     const pool = await Database.getPool();
 
-    const mealObjs = await pool.any(
-      sql.type(Zods.fullMealObj)`
-        SELECT * FROM full_meals
-          WHERE id IN (${sql.join(MealIds, sql.fragment`, `)})
-      `
-    );
+//     const mealObjs = await pool.any(
+//       sql.type(Zods.fullMealObj)`
+//         SELECT * FROM full_meals
+//           WHERE id IN (${sql.join(MealIds, sql.fragment`, `)})
+//       `
+//     );
 
-    return mealObjs.map(o => new FullMeal(o.id, o.name, o.prep_time, o.food_id));
-  }
-}
+//     return mealObjs.map(o => new FullMeal(o.id, o.name, o.prep_time, o.food_id));
+//   }
+// }
 
 
 
@@ -243,3 +287,11 @@ function getRandomInt(max: number) {
   return Math.floor(Math.random() * max);
 }
 
+
+
+export class MealSearchCriteria {
+  MealPLanIdList: number[] = [];
+  MealIdList: number[] = [];
+  PrepTimeGreaterThan: number = 0;
+  PrepTimeLessThan: number = 0;
+}

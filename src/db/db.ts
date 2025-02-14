@@ -43,6 +43,7 @@ export class Zods {
   static mealPlan = z.object({
     id: z.number(),
     name: z.string(),
+    user_id: z.string(),
   });
 
   // meal_plan_meals
@@ -51,6 +52,8 @@ export class Zods {
     meal_plan_id: z.number(),
     meal_id: z.number(),
     is_full_meal: z.boolean(),
+    day_for: z.number(),
+    time_for: z.number(),
   });
 
   // meal_plan_meals right join meal_plans
@@ -85,7 +88,7 @@ export class queries {
     return sql.type(Zods.foodObj)
       `SELECT * FROM foods
           WHERE type NOT IN (10, 20, 30)
-            ${Meals.length > 0 ? sql.unsafe`AND id NOT IN (${sql.join(Meals.map(x => x.mealId), sql.fragment`, `)})` : sql.unsafe``}
+            ${Meals.length > 0 ? sql.unsafe`AND id NOT IN (${sql.join(Meals.map(x => x.MealId), sql.fragment`, `)})` : sql.unsafe``}
           ORDER BY RANDOM()
           LIMIT 1;`
   }

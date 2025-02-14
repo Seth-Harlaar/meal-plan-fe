@@ -11,24 +11,24 @@ export default async function Home() {
   const user = await GetCurrentUser();
 
   const daysOfWeek: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const mealPlans = await MealPlan.GetMealPlans([5]);
+  // const mealPlans = await MealPlan.GetMealPlans([5]);
 
   if(user){
     return (
       <>
-        <PageTitle titleText={mealPlans[0].Name}/>
+        {/* <PageTitle titleText={mealPlans[0].Name}/> */}
         <div className="page-splitter">
           {/* Left side */}
           <div id="meal-plan-days" className="left">
             <select id="meal-plan-selector">
-              {mealPlans.map((mealPlan, index) => {
+              {/* {mealPlans.map((mealPlan, index) => {
                 return <option key={index} value={index}>
                   {mealPlan.Name}
                 </option>
-              })}
+              })} */}
             </select>
 
-            {mealPlans[0].Days.map((day, index) => {
+            {/* {mealPlans[0].Days.map((day, index) => {
               return <div key={index} className="day">
 
                 <h1>{daysOfWeek[index]}</h1>
@@ -36,13 +36,13 @@ export default async function Home() {
                   return <MealListing mealTitle={mealData.name} mealTime={mealTime} key={index}/>
                 })}
               </div>
-            })}
+            })} */}
           </div>
           {/* Right side */}
           <div id="meal-plans" className="right">
             <h1>Meal Plans</h1>
             <div className="meal-plan-list">
-              {mealPlans.map((mealPlan, index) => {
+              {/* {mealPlans.map((mealPlan, index) => {
                 return <React.Fragment key={index}>
                   <div className="meal-plan">
                     <h2>{mealPlan.Name}</h2>
@@ -50,7 +50,7 @@ export default async function Home() {
                   </div>
                   <hr/>
                 </React.Fragment>
-              })}
+              })} */}
               <a id="new-meal-plan-button" href="/mealplan/new">
                 <div>New Meal Plan</div>
               </a>

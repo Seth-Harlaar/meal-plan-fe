@@ -1,5 +1,4 @@
 import { sql } from "slonik";
-import { FullMeal, Meal, PartialMeal } from "./Meal";
 import { z } from 'zod';
 import { DaysOfWeek } from "./enums/DaysOfTheWeek";
 import { MealTime } from "./enums/MealTime";
@@ -8,27 +7,27 @@ import { GetCurrentUser } from "@/auth/auth";
 
 
 
-export class Day {
-  Day: DaysOfWeek = DaysOfWeek.Sunday;
-  Meals = new Map<MealTime, Meal>();
+// export class Day {
+//   Day: DaysOfWeek = DaysOfWeek.Sunday;
+//   Meals = new Map<MealTime, Meal>();
 
-  public setMeal(MealTime: MealTime, Meal: Meal | null): void {
-    if(Meal){
-      this.Meals.set(MealTime, Meal);
-    }
-  }
+//   public setMeal(MealTime: MealTime, Meal: Meal | null): void {
+//     if(Meal){
+//       this.Meals.set(MealTime, Meal);
+//     }
+//   }
 
-  constructor(Day: DaysOfWeek){
-    this.Day = Day;
-  }
+//   constructor(Day: DaysOfWeek){
+//     this.Day = Day;
+//   }
 
-  toJSON() {
-    return {
-      Day: this.Day,
-      Meals: Object.fromEntries(this.Meals),
-    };
-  }
-}
+//   toJSON() {
+//     return {
+//       Day: this.Day,
+//       Meals: Object.fromEntries(this.Meals),
+//     };
+//   }
+// }
 
 
 
@@ -37,40 +36,68 @@ export class MealPlan {
   UserId: number = 0;
   Name: string = "";
 
-
   // * * * * * * * * * * * * * * * * * * * * * *
   // * * *              Get                * * *
   // * * * * * * * * * * * * * * * * * * * * * *
 
-  static async GetMealPlans(MealPlanIdList: number[]): Promise<MealPlan[]>{
+  static async GetMealPlans(InputCriteria: Partial<MealPlanSearchCriteria>): Promise<MealPlan[]>{
+    const DefaultCriteria = new MealPlanSearchCriteria();
+    const Criteria = {...DefaultCriteria, ...InputCriteria };
     const pool = await Database.getPool();
     
     let MealPlans: MealPlan[] = [];
 
-    if(MealPlanIdList.length <= 0){
-      console.log('GetMealPlan: Ids required to get meal plans');
+    let query = sql.type(Zods.mealPlan)`
+      SELECT *
+      FROM public.meal_plans
+      WHERE 1=1
+ 
+      ${ // meal plan ids
+        (Criteria.MealPLanIdList.length > 0) 
+        ? sql.fragment`AND id IN (${sql.join(Criteria.MealPLanIdList, sql.fragment`, `)})`
+        : sql.fragment``}
+
+      ${ // user ids
+        (Criteria.UserIdList.length > 0)
+        ? sql.fragment`AND user_id IN (${sql.join(Criteria.UserIdList, sql.fragment`, `)})`
+        : sql.fragment``}
+
+      ${ // name
+        (Criteria.Name.length > 0)
+        ? sql.fragment`AND name LIKE ${'%' + Criteria.Name + '%'}`
+        : sql.fragment`` }
+
+      ORDER BY id;
+    `;
+
+    console.log(query);
+
+    try {
+      const results = await pool.query(query);
+      console.log(results);
+    } catch (error) {
+      console.log('Error while searching for meal plans', error);
       return [];
     }
 
     return MealPlans;
-      
   }
 
-  public static async GenerateMealPlan(): Promise<MealPlan> {
-    let NewMealPlan: MealPlan = new MealPlan();
+  // public static async GenerateMealPlan(): Promise<MealPlan> {
+  //   let NewMealPlan: MealPlan = new MealPlan();
 
-    // meal for each day - dinners only right now
-    for(let i = 0; i < 7; i++){
-      let newDay = new Day(i as DaysOfWeek);
-      let newMeal = await Meal.GetRandomMeal(NewMealPlan);
-      newDay.setMeal(30 as MealTime, newMeal);
-    }
+  //   // meal for each day - dinners only right now
+  //   for(let i = 0; i < 7; i++){
+  //     let newDay = new Day(i as DaysOfWeek);
+  //     let newMeal = await Meal.GetRandomMeal(NewMealPlan);
+  //     newDay.setMeal(30 as MealTime, newMeal);
+  //   }
 
-    // get this or use user input
-    const mealPlanName = MealPlan.genericMealPlanName();
+  //   // get this or use user input
+  //   const mealPlanName = MealPlan.genericMealPlanName();
 
-    return NewMealPlan;
-  }
+  //   return NewMealPlan;
+  // }
 
   // save meal plan
   public async SaveChanges(): Promise<void> {
@@ -102,35 +129,33 @@ export class MealPlan {
   }
 
 
-
-
   // * * * * * * * * * * * * * * * * * * * * * *
   // * * *              Set                * * *
   // * * * * * * * * * * * * * * * * * * * * * *
 
-  public async ReplaceMealRandom(Day: DaysOfWeek, Time: MealTime): Promise<MealPlan> {
-    const pool = await Database.getPool();
+  // public async ReplaceMealRandom(Day: DaysOfWeek, Time: MealTime): Promise<MealPlan> {
+  //   const pool = await Database.getPool();
 
-    const newMeal = await Meal.GetRandomMeal(this);
+  //   const newMeal = await Meal.GetRandomMeal(this);
 
-    const query = sql.type(z.object({id: z.number()}))`
-      UPDATE meal_plan_meals
-        SET meal_id = ${newMeal.mealId},
-          is_full_meal = ${newMeal instanceof FullMeal}
-      WHERE meal_plan_id = ${this.MealPlanId}
-      AND day_for = ${Day}
-      AND time_for = ${Time}
-    `;
+  //   const query = sql.type(z.object({id: z.number()}))`
+  //     UPDATE meal_plan_meals
+  //       SET meal_id = ${newMeal.MealId},
+  //         is_full_meal = ${newMeal instanceof FullMeal}
+  //     WHERE meal_plan_id = ${this.MealPlanId}
+  //     AND day_for = ${Day}
+  //     AND time_for = ${Time}
+  //   `;
 
-    try {
-      await pool.query(query);
-    } catch (error) {
-      console.log('Error while inserting into meal_plan_meals', error);
-      return new MealPlan();
-    }
+  //   try {
+  //     await pool.query(query);
+  //   } catch (error) {
+  //     console.log('Error while inserting into meal_plan_meals', error);
+  //     return new MealPlan();
+  //   }
 
-    return this;
-  }
+  //   return this;
+  // }
 
 
   public async ReplaceMealCustom(Day: DaysOfWeek, Time: MealTime, MealId: number, IsFullMeal: boolean): Promise<MealPlan> {
@@ -171,4 +196,11 @@ export class MealPlan {
   
     return `Week of ${month} ${day}, ${year}`;
   }
+}
+
+
+export class MealPlanSearchCriteria {
+  MealPLanIdList: number[] = [];
+  UserIdList: number[] = [];
+  Name: string = "";
 }
