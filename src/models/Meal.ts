@@ -108,26 +108,26 @@ export class Meal {
     const pool = await Database.getPool();
 
     // const Meals = MealPlan.Days.flatMap(d => Array.from(d.Meals.values()));
-    const Meals = await Meal.GetMeals(Object.assign(new MealSearchCriteria(), {
+    const Meals = MealPlanId > 0 ? await Meal.GetMeals(Object.assign(new MealSearchCriteria(), {
       MealIdList: [MealPlanId],
-    }));
+    }))
+    : [];
 
     const partialMeals = Meals.filter(x => !x.IsFullMeal);
     const fullMeals = Meals.filter(x => x.IsFullMeal);
 
     const makeFullMeal = getRandomInt(8) > 2;
     if(makeFullMeal){
-      const randomMeal = await pool.one(
-        sql.type(Zods.fullMealObj)`SELECT * FROM full_meals
-            ${fullMeals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(fullMeals.map(x => x.MealId), sql.fragment`, `)})` : sql.unsafe``}
-          ORDER BY RANDOM()
-          LIMIT 1;
-        `);
-
+      const query = sql.type(Zods.fullMealObj)`SELECT * FROM full_meals
+          ${fullMeals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(fullMeals.map(x => x.MealId), sql.fragment`, `)})` : sql.unsafe``}
+        ORDER BY RANDOM()
+        LIMIT 1;
+      `;
+      const randomMeal = await pool.one(query);
       return Object.assign(new Meal(), {
         MealPlanId: MealPlanId,
         MealSubId: randomMeal.id,
-        IsFullMeal: false,
+        IsFullMeal: true,
         DayFor: DaysOfWeek.Sunday,
         TimeFor: MealTime.DINNER,
       });

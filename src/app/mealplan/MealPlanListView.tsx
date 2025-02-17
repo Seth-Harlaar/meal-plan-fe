@@ -7,22 +7,32 @@ import { GetRandomMeal } from "./new/action";
 
 
 export default function MealPlanListView({mealDataList}: {mealDataList: mealPlanMealType[]}){
-  const [meals, setMeals] = useState(mealDataList);
+  const [meals, setMeals] = useState<(mealPlanMealType|null)[]>(mealDataList);
   const [isPending, startTransition] = useTransition();
 
   function rerollItem(index: number) {
+    console.log(meals);
+    let mealPlanId = meals[index]?.meal_plan_id;
+    console.log('reroll', mealPlanId);
+    let newMealList = [...meals];
+    newMealList[index] = null;
+    setMeals(newMealList);
+    
     startTransition(async () => {
-      const newMeal = await GetRandomMeal(meals[0].meal_plan_id);
-      let newMealList = meals;
+      newMealList = [...meals];
+      console.log('transition', mealPlanId);
+      const newMeal = await GetRandomMeal(mealPlanId ?? 0);
+      console.log(newMeal);
       newMealList[index] = newMeal;
+      setMeals(newMealList);
     });
   }
 
   return (
-    <>
-    {mealDataList.map((mealData, index) => {
-      return <MealPlanListItem mealData={mealData} rerollClick={rerollItem} key={index}/>
-    })}
-    </>
+    <div className="meal-plan-days">
+      {meals.map((mealData, index) => {
+        return <MealPlanListItem mealData={mealData} rerollFunction={() => rerollItem(index)} key={index}/>
+      })}
+    </div>
   )
 }

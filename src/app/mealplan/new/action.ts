@@ -27,12 +27,12 @@ export async function GetMeal(mealId: number){
   return meal;
 }
 
-export async function GetRandomMeal(MealPlanId: number): Promise<mealPlanMealType> {
+export async function GetRandomMeal(MealPlanId: number): Promise<mealPlanMealType | null> {
   const meal = await Meal.GetRandomMeal(MealPlanId);
   const mealData: mealPlanMealType = {
     id: meal.MealId,
     meal_plan_id: meal.MealPlanId,
-    meal_id: meal.MealId,
+    meal_id: meal.MealSubId,
     is_full_meal: meal.IsFullMeal,
     day_for: meal.DayFor,
     time_for: meal.TimeFor,

@@ -38,7 +38,6 @@ export default async function Home() {
     };
     newMeals.push(newMeal);
   }
-  console.log('page', newMeals.length);
 
   return (
     <>
