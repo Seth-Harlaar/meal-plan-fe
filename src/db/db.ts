@@ -80,6 +80,9 @@ export class Zods {
 }
 
 
+// types
+export type mealPlanMealType = z.infer<typeof Zods.mealPlanMeal>;
+
 
 // queries
 export class queries {

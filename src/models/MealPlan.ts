@@ -106,11 +106,11 @@ export class MealPlan {
     
     // save meal plan to db
     if(User == null){
-      console.log('Could not save mealplan.', this);
+      console.log('User could not be authenticated');
       return;
     }
 
-    if(this.MealPlanId > 0){
+    if(this.MealPlanId <= 0){
       let Results = await pool.one(sql.type(z.object({id: z.number()}))`
         INSERT INTO meal_plans (user_id, name)
           VALUES (${User.UserId}, ${this.Name})

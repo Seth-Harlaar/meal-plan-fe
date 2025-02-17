@@ -1,41 +1,52 @@
+'use server'
 import React from "react";
-
 import { GetCurrentUser } from "@/auth/auth";
 import LogInMessage from "@/components/LogInMessage";
 import PageTitle from "@/components/PageTitle";
 import { MealPlan, MealPlanSearchCriteria } from "@/models/MealPlan";
 import { Meal, MealSearchCriteria } from "@/models/Meal";
+import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
+import { MealTime } from "@/models/enums/MealTime";
+import MealListing from "@/components/MealPlanListItem";
+import MealPlanListView from "../MealPlanListView";
+import { mealPlanMealType, Zods } from "@/db/db";
 
 export default async function Home() {
   const user = await GetCurrentUser();
-
-
-  // MealPlan.GetMealPlans(
-  //   Object.assign(new MealPlanSearchCriteria(), {
-  //     Name: 'Week'
-  //   })
-  // );
-
-  const meals = await Meal.GetMeals(
-    Object.assign(new MealSearchCriteria(), {
-      MealPLanIdList: [18],
-      MealIdList: [392, 10, 466]
-    })
-  );
-
-  console.log(meals);
-
-  if(user){
-    return (
-      <>
-        <PageTitle titleText="New Meal Plan"/>
-      </>
-    );
-  } else {
-
+  if(!user){
     return (
       <LogInMessage/>
     );
   }
+
+  // meal plan
+  const newMealPlan = Object.assign(new MealPlan(), {
+    UserId: user.UserId,
+    Name: MealPlan.genericMealPlanName(),
+  });
+
+  // meals
+  const newMeals: mealPlanMealType[] = [];
+  for(let i = 0; i < 7; i++){
+    const newMeal: mealPlanMealType = {
+      id: 0,
+      meal_plan_id: 0,
+      meal_id: 450,
+      is_full_meal: false,
+      day_for: DaysOfWeek.Sunday,
+      time_for: MealTime.DINNER,
+    };
+    newMeals.push(newMeal);
+  }
+  console.log('page', newMeals.length);
+
+  return (
+    <>
+      <PageTitle titleText="New Meal Plan"/>
+      <PageTitle titleText={newMealPlan.Name}/>
+      <MealPlanListView mealDataList={newMeals} />
+    </>
+
+  );
 }
 

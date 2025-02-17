@@ -1,6 +1,6 @@
 import React from "react";
 import PageTitle from "../components/PageTitle";
-import MealListing from "../components/MealListing";
+import MealListing from "../components/MealPlanListItem";
 import { MealPlan } from "../models/MealPlan";
 import { cookies } from "next/headers";
 

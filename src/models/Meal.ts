@@ -4,9 +4,12 @@ import { MealPlan } from "./MealPlan";
 import { Database, Zods } from "../db/db";
 import { DaysOfWeek } from "./enums/DaysOfTheWeek";
 import { MealTime } from "./enums/MealTime";
+import { GetCurrentUser } from "@/auth/auth";
+import { z } from "zod";
 
 // The basis of the meal
 export class Meal {
+  MealPlanId: number = 0;
   MealId: number = 0;
   MealSubId: number = 0;
   IsFullMeal: boolean = false;
@@ -41,6 +44,7 @@ export class Meal {
       let Meals = results.map(meal => Object.assign(
         new Meal(),
         {
+          MealPlanId: meal.meal_plan_id,
           MealId: meal.id,
           MealSubId: meal.meal_id,
           IsFullMeal: meal.is_full_meal,
@@ -57,6 +61,42 @@ export class Meal {
   }
 
 
+  // save meal plan
+  public async SaveChanges(): Promise<void> {
+    const pool = await Database.getPool();
+    const User = await GetCurrentUser();
+    
+    // save meal plan to db
+    if(User == null){
+      console.log('User could not be authenticated.');
+      return;
+    }
+
+    try {
+      if(this.MealId <= 0){
+        let Results = await pool.one(sql.type(z.object({id: z.number()}))`
+          INSERT INTO meal_plan_meals (meal_plan_id, meal_id, is_full_meal, day_for, time_for)
+            VALUES (${this.MealPlanId}, ${this.MealSubId}, ${this.IsFullMeal}, ${this.DayFor}, ${this.TimeFor})
+          RETURNING id;
+        `);
+        this.MealPlanId = Results.id;
+
+      } else {
+        await pool.one(sql.type(z.object({id: z.number()}))`
+          UPDATE meal_plan_meals
+            SET meal_plan_id = ${this.MealPlanId},
+            meal_id = ${this.MealSubId},
+            is_full_meal = ${this.IsFullMeal},
+            day_for = ${this.DayFor},
+            time_for = ${this.TimeFor}
+          WHERE id = ${this.MealId}
+          RETURNING id;
+        `);
+      }
+    } catch(e) {
+      console.log(`There was an error saving changes to meal with id: ${this.MealId}`, e);
+    }
+  }
 
   // * * * * * * * * * * * * * * * * * * * * * *
   // * * *          Generating             * * *
@@ -64,25 +104,34 @@ export class Meal {
 
   // function that takes in list of food ids
   // and gets random meal that don't already have
-  static async GetRandomMeal(MealPlan: MealPlan): Promise<void> {
+  static async GetRandomMeal(MealPlanId: number): Promise<Meal> {
     const pool = await Database.getPool();
 
     // const Meals = MealPlan.Days.flatMap(d => Array.from(d.Meals.values()));
+    const Meals = await Meal.GetMeals(Object.assign(new MealSearchCriteria(), {
+      MealIdList: [MealPlanId],
+    }));
 
-    // const partialMeals = Meals.filter(x => x instanceof PartialMeal);
-    // const fullMeals = Meals.filter(x => x instanceof FullMeal);
+    const partialMeals = Meals.filter(x => !x.IsFullMeal);
+    const fullMeals = Meals.filter(x => x.IsFullMeal);
 
-    // const makeFullMeal = getRandomInt(8) > 2;
-    // if(makeFullMeal){
-    //   const randomMeal = await pool.one(
-    //     sql.type(Zods.fullMealObj)`SELECT * FROM full_meals
-    //         ${fullMeals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(fullMeals.map(x => x.mealId), sql.fragment`, `)})` : sql.unsafe``}
-    //       ORDER BY RANDOM()
-    //       LIMIT 1;
-    //     `);
+    const makeFullMeal = getRandomInt(8) > 2;
+    if(makeFullMeal){
+      const randomMeal = await pool.one(
+        sql.type(Zods.fullMealObj)`SELECT * FROM full_meals
+            ${fullMeals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(fullMeals.map(x => x.MealId), sql.fragment`, `)})` : sql.unsafe``}
+          ORDER BY RANDOM()
+          LIMIT 1;
+        `);
 
-    //   return new FullMeal(randomMeal.id, randomMeal.name, randomMeal.prep_time, randomMeal.id);
-
+      return Object.assign(new Meal(), {
+        MealPlanId: MealPlanId,
+        MealSubId: randomMeal.id,
+        IsFullMeal: false,
+        DayFor: DaysOfWeek.Sunday,
+        TimeFor: MealTime.DINNER,
+      });
+    }
     // } else {
     //   // get random partial meal
     //   const randomMeal = await pool.one(
@@ -113,7 +162,7 @@ export class Meal {
       // return new PartialMeal(1, 1, "a", 1, []);
     // }
 
-
+    return new Meal();
   }
 
 
