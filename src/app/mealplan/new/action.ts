@@ -1,5 +1,6 @@
 "use server";
-import { mealPlanMealType, Zods } from "@/db/db";
+import { FoodResultType, MealPlanMealResultType, Zods } from "@/db/db";
+import { Food } from "@/models/Food";
 import { Meal, MealSearchCriteria } from "@/models/Meal";
 import { z } from "zod";
 
@@ -27,9 +28,9 @@ export async function GetMeal(mealId: number){
   return meal;
 }
 
-export async function GetRandomMeal(MealPlanId: number): Promise<mealPlanMealType | null> {
+export async function GetRandomMeal(MealPlanId: number): Promise<MealPlanMealResultType | null> {
   const meal = await Meal.GetRandomMeal(MealPlanId);
-  const mealData: mealPlanMealType = {
+  const mealData: MealPlanMealResultType = {
     id: meal.MealId,
     meal_plan_id: meal.MealPlanId,
     meal_id: meal.MealSubId,
@@ -39,3 +40,22 @@ export async function GetRandomMeal(MealPlanId: number): Promise<mealPlanMealTyp
   };
   return mealData;
 }
+
+export async function GetFullMealFoods(FullMealId: number): Promise<FoodResultType | null> {
+  if(FullMealId == -1){
+    return null;
+  }
+
+  const FoodResult = await Food.GetFullMealFood(FullMealId);
+  if(FoodResult == null){
+    return null;
+  }
+
+  const FoodData: FoodResultType = {
+    id: FoodResult.id,
+    type: FoodResult.type,
+    name: FoodResult.name,
+    prep_time: FoodResult.prepTime,
+  };
+  return FoodData;
+};

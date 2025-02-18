@@ -81,7 +81,8 @@ export class Zods {
 
 
 // types
-export type mealPlanMealType = z.infer<typeof Zods.mealPlanMeal>;
+export type MealPlanMealResultType = z.infer<typeof Zods.mealPlanMeal>;
+export type FoodResultType = z.infer<typeof Zods.foodObj>;
 
 
 // queries

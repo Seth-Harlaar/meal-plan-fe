@@ -9,7 +9,7 @@ import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
 import { MealTime } from "@/models/enums/MealTime";
 import MealListing from "@/components/MealPlanListItem";
 import MealPlanListView from "../MealPlanListView";
-import { mealPlanMealType, Zods } from "@/db/db";
+import { MealPlanMealResultType, Zods } from "@/db/db";
 
 export default async function Home() {
   const user = await GetCurrentUser();
@@ -26,13 +26,13 @@ export default async function Home() {
   });
 
   // meals
-  const newMeals: mealPlanMealType[] = [];
+  const newMeals: MealPlanMealResultType[] = [];
   for(let i = 0; i < 7; i++){
-    const newMeal: mealPlanMealType = {
+    const newMeal: MealPlanMealResultType = {
       id: 0,
       meal_plan_id: 0,
-      meal_id: 450,
-      is_full_meal: false,
+      meal_id: 1,
+      is_full_meal: true,
       day_for: DaysOfWeek.Sunday,
       time_for: MealTime.DINNER,
     };

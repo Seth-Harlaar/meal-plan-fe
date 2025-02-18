@@ -1,21 +1,36 @@
+import { Database, Zods } from "@/db/db";
 import { MealTime } from "./enums/MealTime";
+import { sql } from "slonik";
 
 export class Food {
-  id: number;
-  type: FoodType;
+  id: number = 0;
+  type: FoodType = FoodType.MAIN;
   name: string = "";
   prepTime: number = 0;
-  SuggestedMealTime: MealTime = 30;
 
-  constructor(type: FoodType, id: number, name: string = "", prepTime: number = 0){
-    this.type = type;
-    this.id = id;
-    this.name = name;
-    this.prepTime = prepTime;
+  static async GetFullMealFood(FullMealId: number){
+    const pool = await Database.getPool();
+    
+    const query = sql.type(Zods.foodObj)`
+      SELECT food_id, foods.* from public.full_meals
+        LEFT JOIN public.foods on (food_id = public.foods.id)
+        WHERE public.full_meals.id = ${FullMealId}
+    `;
+    try {
+      const FoodResult = await pool.one(query);
+      return Object.assign(new Food(), {
+        id: FoodResult.id,
+        type: FoodResult.type,
+        name: FoodResult.name,
+        prepTime: FoodResult.prep_time,
+      });
+
+    } catch(e) {
+      console.log(`There was an error finding the food for full meal ${FullMealId}: `, e);
+      return null;
+    }
   }
 }
-
-
 
 
 export enum FoodType {
