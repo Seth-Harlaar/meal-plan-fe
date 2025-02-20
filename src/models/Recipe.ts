@@ -1,4 +1,4 @@
-import { Database, Zods } from "@/db/db";
+import { Database, RecipeResultType, Zods } from "@/db/db";
 import { MealSearchCriteria, ScheduledMeal } from "./Meal";
 import { sql } from "slonik";
 import { DaysOfWeek } from "./enums/DaysOfTheWeek";
@@ -7,11 +7,45 @@ import { MealTime } from "./enums/MealTime";
 
 
 
-class Recipe {
+export default class Recipe {
   RecipeId: number = 0;
   Name: string = "";
   Instructions: string = "";
   PrepTime: number = 0;
+
+
+  static async Search(InputCriteria: RecipeSearchCriteria){
+    const Criteria = Object.assign(new RecipeSearchCriteria(), InputCriteria);
+    const pool = await Database.getPool();
+    
+    let query = sql.type(Zods.recipeResult)`
+      SELECT *
+      FROM public.recipes
+      WHERE 1=1
+ 
+      ${ // meal plan ids
+        (Array.isArray(Criteria.RecipeIdList) && Criteria.RecipeIdList.length > 0)
+        ? sql.fragment`AND id IN (${sql.join(Criteria.RecipeIdList, sql.fragment`, `)})`
+        : sql.fragment``}
+      
+      ${ // name
+        (Criteria.Name.length > 0)
+        ? sql.fragment`AND name LIKE ${'%' + Criteria.Name + '%'}`
+        : sql.fragment`` }
+
+      ORDER BY id;
+    `;
+
+    try {
+      const results = await pool.any(query);
+      return results.map(recipe => Recipe.Deserialize(recipe));
+
+    } catch (error) {
+      console.log('Error while searching for meal plans', error);
+      return [];
+    }
+  }
+
 
   // function that takes in list of food ids
   // and gets random meal that don't already have
@@ -24,28 +58,54 @@ class Recipe {
     }))
     : [];
 
-    if(true){
-      const query = sql.type(Zods.recipeResult)`SELECT * FROM recipes
-          ${Meals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(Meals.map(x => x.ScheduledMealID), sql.fragment`, `)})` : sql.unsafe``}
-        ORDER BY RANDOM()
-        LIMIT 1;
-      `;
-      const randomRecipe = await pool.one(query);
+    const query = sql.type(Zods.recipeResult)`SELECT * FROM public.recipes
+        ${Meals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(Meals.map(x => x.ScheduledMealID), sql.fragment`, `)})` : sql.unsafe``}
+      ORDER BY RANDOM()
+      LIMIT 1;
+    `;
 
-      return Object.assign(new Recipe(), {
-        RecipeId: randomRecipe.id,
-        Name: randomRecipe.name,
-        Instructins: randomRecipe.instructions,
-        PrepTime: randomRecipe.prep_time,
-      });
+    try {
+      const randomRecipe = await pool.one(query);
+      return Recipe.Deserialize(randomRecipe);
+    } catch (e) {
+      console.log('Error while retrieving random recipe', e);
+      return new Recipe();
     }
   }
+
+  static Serialize(InputRecipe: Recipe): RecipeResultType {
+    return {
+      id: InputRecipe.RecipeId,
+      name: InputRecipe.Name,
+      instructions: InputRecipe.Instructions,
+      prep_time: InputRecipe.PrepTime,
+    }
+  }
+
+  static Deserialize(RecipeData: RecipeResultType): Recipe {
+    return Object.assign(new Recipe(), {
+      RecipeId: RecipeData.id,
+      Name: RecipeData.name,
+      Instructions: RecipeData.instructions,
+      PrepTime: RecipeData.prep_time,
+    });
+  }
+
 }
 
-
+export class RecipeSearchCriteria {
+  RecipeIdList: number[] = [];
+  Name: string = "";
+  PrepTimeGreaterThan: number = 0;
+  PrepTimeLessThan: number = 0;
+}
 
 
 
 function getRandomInt(max: number) {
   return Math.floor(Math.random() * max);
 }
+
+
+
+

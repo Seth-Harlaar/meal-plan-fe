@@ -263,6 +263,4 @@ export class ScheduledMeal {
 export class MealSearchCriteria {
   MealPLanIdList: number[] = [];
   MealIdList: number[] = [];
-  PrepTimeGreaterThan: number = 0;
-  PrepTimeLessThan: number = 0;
 }

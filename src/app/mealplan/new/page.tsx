@@ -7,6 +7,8 @@ import { MealPlan } from "@/models/MealPlan";
 import { ScheduledMeal } from "@/models/Meal";
 import MealPlanListView from "../MealPlanListView";
 import { MealResultType, Zods } from "@/db/db";
+import Recipe from "@/models/Recipe";
+import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
 
 export default async function Home() {
   const user = await GetCurrentUser();
@@ -19,14 +21,13 @@ export default async function Home() {
   // meals
   const newMeals: MealResultType[] = [];
   for(let i = 0; i < 7; i++){
-    const randomMeal = await ScheduledMeal.GetRandomRecipe(0);
+    const randomRecipe = await Recipe.GetRandomRecipe(0);
     const newMealData: MealResultType = {
-      id: randomMeal.ScheduledMealID,
+      id: 0,
       meal_plan_id: 0,
-      meal_id: randomMeal.MealSubId,
-      is_full_meal: randomMeal.IsFullMeal,
-      day_for: i,
-      time_for: randomMeal.TimeFor,
+      day_for: i as DaysOfWeek,
+      time_for: DaysOfWeek.Sunday,
+      recipe_id: randomRecipe.RecipeId,
     };
     newMeals.push(newMealData);
   }

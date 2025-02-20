@@ -6,21 +6,21 @@ import { GetRandomMeal, saveMealPlan } from "./new/action";
 import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
 
 export default function MealPlanListView({mealDataList}: {mealDataList: MealResultType[]}){
-  const [meals, setMeals] = useState<(MealResultType|null)[]>(mealDataList);
+  const [meals, setMeals] = useState<(MealResultType)[]>(mealDataList);
   const [isPending, startTransition] = useTransition();
 
   function rerollItem(index: number) {
     console.log(meals);
     let mealPlanId = meals[index]?.meal_plan_id;
     let newMealList = [...meals];
-    newMealList[index] = null;
+    newMealList[index].recipe_id = 0;
     setMeals(newMealList);
     
     startTransition(async () => {
       newMealList = [...meals];
-      const newMeal = await GetRandomMeal(mealPlanId ?? 0);
-      console.log(newMeal);
-      newMealList[index] = newMeal;
+      const newRecipe = await GetRandomMeal(mealPlanId ?? 0);
+      console.log(newRecipe);
+      newMealList[index].recipe_id = newRecipe?.id ?? 0;
       setMeals(newMealList);
     });
   }
