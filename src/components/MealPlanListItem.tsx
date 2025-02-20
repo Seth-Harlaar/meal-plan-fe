@@ -2,10 +2,10 @@
 import { useEffect, useState, useTransition } from "react";
 import { RefreshButton } from "./Buttons";
 import './styles/MealListing.css';
-import { FoodResultType, MealPlanMealResultType } from "@/db/db";
+import { FoodResultType, MealResultType } from "@/db/db";
 import { GetFullMealFoods } from "@/app/mealplan/new/action";
 
-export default function MealPlanListItem({mealData, rerollFunction}: {mealData: MealPlanMealResultType | null, rerollFunction: () => void}){
+export default function MealPlanListItem({mealData, rerollFunction}: {mealData: MealResultType | null, rerollFunction: () => void}){
   const mealTimes: string[] = ["Breakfast", "Lunch", "Dinner", "Snack", "Other"];
   const [foodData, setFoodData] = useState<FoodResultType | null>(null);
   const [isPending, startTransition] = useTransition();

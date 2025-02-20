@@ -1,27 +1,26 @@
 import { sql } from "slonik";
 import { Food, FoodType } from "./Food";
 import { MealPlan } from "./MealPlan";
-import { Database, Zods } from "../db/db";
+import { Database, MealResultType, Zods } from "../db/db";
 import { DaysOfWeek } from "./enums/DaysOfTheWeek";
 import { MealTime } from "./enums/MealTime";
 import { GetCurrentUser } from "@/auth/auth";
 import { z } from "zod";
 
 // The basis of the meal
-export class Meal {
+export class ScheduledMeal {
   MealPlanId: number = 0;
-  MealId: number = 0;
-  MealSubId: number = 0;
-  IsFullMeal: boolean = false;
+  ScheduledMealID: number = 0;
   DayFor: DaysOfWeek = DaysOfWeek.Sunday;
   TimeFor: MealTime = MealTime.DINNER;
+  RecipeId: number = 0;
 
-  static async GetMeals(InputCriteria: MealSearchCriteria): Promise<Meal[]>{
+  static async GetMeals(InputCriteria: MealSearchCriteria): Promise<ScheduledMeal[]>{
     const DefaultCriteria = new MealSearchCriteria();
     const Criteria = {...DefaultCriteria, ...InputCriteria };
     const pool = await Database.getPool();
     
-    let query = sql.type(Zods.mealPlanMeal)`
+    let query = sql.type(Zods.mealResult)`
       SELECT *
       FROM public.meal_plan_meals
       WHERE 1=1
@@ -42,14 +41,13 @@ export class Meal {
     try {
       const results = await pool.any(query);
       let Meals = results.map(meal => Object.assign(
-        new Meal(),
+        new ScheduledMeal(),
         {
-          MealPlanId: meal.meal_plan_id,
           MealId: meal.id,
-          MealSubId: meal.meal_id,
-          IsFullMeal: meal.is_full_meal,
+          MealPlanId: meal.meal_plan_id,
           DayFor: meal.day_for as DaysOfWeek,
-          TimeFor: meal.time_for as MealTime
+          TimeFor: meal.time_for as MealTime,
+          RecipeId: meal.recipe_id,
         }
       ));
       return Meals;
@@ -73,10 +71,10 @@ export class Meal {
     }
 
     try {
-      if(this.MealId <= 0){
+      if(this.ScheduledMealID <= 0){
         let Results = await pool.one(sql.type(z.object({id: z.number()}))`
           INSERT INTO meal_plan_meals (meal_plan_id, meal_id, is_full_meal, day_for, time_for)
-            VALUES (${this.MealPlanId}, ${this.MealSubId}, ${this.IsFullMeal}, ${this.DayFor}, ${this.TimeFor})
+            VALUES (${this.MealPlanId}, ${this.DayFor}, ${this.TimeFor})
           RETURNING id;
         `);
         this.MealPlanId = Results.id;
@@ -85,16 +83,14 @@ export class Meal {
         await pool.one(sql.type(z.object({id: z.number()}))`
           UPDATE meal_plan_meals
             SET meal_plan_id = ${this.MealPlanId},
-            meal_id = ${this.MealSubId},
-            is_full_meal = ${this.IsFullMeal},
             day_for = ${this.DayFor},
             time_for = ${this.TimeFor}
-          WHERE id = ${this.MealId}
+          WHERE id = ${this.ScheduledMealID}
           RETURNING id;
         `);
       }
     } catch(e) {
-      console.log(`There was an error saving changes to meal with id: ${this.MealId}`, e);
+      console.log(`There was an error saving changes to meal with id: ${this.ScheduledMealID}`, e);
     }
   }
 
@@ -102,56 +98,7 @@ export class Meal {
   // * * *          Generating             * * *
   // * * * * * * * * * * * * * * * * * * * * * *
 
-  // function that takes in list of food ids
-  // and gets random meal that don't already have
-  static async GetRandomMeal(MealPlanId: number): Promise<Meal> {
-    const pool = await Database.getPool();
-
-    // const Meals = MealPlan.Days.flatMap(d => Array.from(d.Meals.values()));
-    const Meals = MealPlanId > 0 ? await Meal.GetMeals(Object.assign(new MealSearchCriteria(), {
-      MealIdList: [MealPlanId],
-    }))
-    : [];
-
-    const partialMeals = Meals.filter(x => !x.IsFullMeal);
-    const fullMeals = Meals.filter(x => x.IsFullMeal);
-
-    const makeFullMeal = getRandomInt(8) > 2;
-    if(true){
-      const query = sql.type(Zods.fullMealObj)`SELECT * FROM full_meals
-          ${fullMeals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(fullMeals.map(x => x.MealId), sql.fragment`, `)})` : sql.unsafe``}
-        ORDER BY RANDOM()
-        LIMIT 1;
-      `;
-      const randomMeal = await pool.one(query);
-
-      return Object.assign(new Meal(), {
-        MealPlanId: MealPlanId,
-        MealSubId: randomMeal.id,
-        IsFullMeal: true,
-        DayFor: DaysOfWeek.Sunday,
-        TimeFor: MealTime.DINNER,
-      });
-
-    } else {
-      // get random partial meal
-      const query = sql.type(Zods.partialMealObj)`SELECT * FROM partial_meals
-          ${partialMeals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(partialMeals.map(x => x.MealId), sql.fragment`, `)})` : sql.unsafe``}
-        ORDER BY RANDOM()
-        LIMIT 1;
-      `;
-      const randomMeal = await pool.one(query);
-
-      return Object.assign(new Meal(), {
-        MealPlanId: MealPlanId,
-        MealSubId: randomMeal.id,
-        IsFullMeal: false,
-        DayFor: DaysOfWeek.Sunday,
-        TimeFor: MealTime.DINNER,
-      });
-    }
-  }
-
+  
 
   
   // // creates a partial meal in the db w/ purely random picks 
@@ -198,7 +145,6 @@ export class Meal {
   //       Object.assign(new Food(FoodType.VEGETABLE, randomVeggie.id), {name: randomVeggie.name, prepTime: randomVeggie.prep_time }),
   //     ];
 
-  //     var newSerial = Meal.GenerateFoodSerial(Foods);
   //   } while (serials.includes(newSerial))
 
   //   if(newSerial != ''){
@@ -245,7 +191,6 @@ export class Meal {
 
 
 
-// export class PartialMeal extends Meal {
 //   foodList: Food[] = [];
 
 //   constructor(mealId: number, mealSubId:number, name: string, prepTime: number, foodList: Food[]) {
@@ -253,14 +198,12 @@ export class Meal {
 //     this.foodList = foodList;
 //   }
 
-//   static async GetMeals(MealIds: number[]): Promise<Meal[]>{
 //     if(MealIds.length <= 0){
 //       return [];
 //     }
 
 //     const pool = await Database.getPool();
 
-//     let Meals: Meal[] = [];
 
 //     for(let i = 0; i < MealIds.length; i++){
 //       const foods = await pool.many(
@@ -288,10 +231,8 @@ export class Meal {
 // }
 
 
-// export class FullMeal extends Meal {
 //   foodId: number = 0;
 
-//   static async GetMeals(MealIds: number[]): Promise<Meal[]>{
 //     if(MealIds.length <= 0){
 //       return [];
 //     }
@@ -316,9 +257,6 @@ export class Meal {
 
 
 
-function getRandomInt(max: number) {
-  return Math.floor(Math.random() * max);
-}
 
 
 

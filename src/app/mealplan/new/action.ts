@@ -1,37 +1,56 @@
 "use server";
-import { FoodResultType, MealPlanMealResultType, Zods } from "@/db/db";
+import { GetCurrentUser } from "@/auth/auth";
+import { FoodResultType, MealResultType, Zods } from "@/db/db";
 import { Food } from "@/models/Food";
-import { Meal, MealSearchCriteria } from "@/models/Meal";
+import { ScheduledMeal, MealSearchCriteria } from "@/models/Meal";
+import { MealPlan } from "@/models/MealPlan";
 import { z } from "zod";
 
-export async function saveMealPlan(newMealData: z.infer<typeof Zods.mealPlanMeal>[]) {
-  
-  // create new mealplan
+export async function saveMealPlan(newMealData: MealResultType[]) {
+  const user = await GetCurrentUser();
+  if(!user){
+    console.log('User not logged in.');
+    return null;
+  }
 
-
-  // create new meals
+  const newMealPlan = Object.assign(new MealPlan(), {
+    UserId: user.UserId,
+    Name: MealPlan.genericMealPlanName(),
+  });
 
   try {
-    const newMeal = Object.assign(new Meal(), newMealData);
-    await newMeal.SaveChanges();
-    return { success: true };
-  } catch (error) {
-    console.error("Error saving meal:", error);
+    await newMealPlan.SaveChanges();
+
+    // save each meal
+    newMealData.forEach(mealData => {
+      let meal = Object.assign(new ScheduledMeal(), {
+        MealId: mealData.id,
+        MealPlanId: newMealPlan.MealPlanId,
+        MealSubId: mealData.meal_id,
+        IsFullMeal: mealData.is_full_meal,
+        DayFor: mealData.day_for,
+        TimeFor: mealData.time_for,
+      });
+      meal.SaveChanges();
+    });
+
+  } catch (e) {
+    console.log('Error while trying to save meal plan: ', e);
   }
 }
 
 export async function GetMeal(mealId: number){
-  const meal = (await Meal.GetMeals(Object.assign(new MealSearchCriteria(), {
+  const meal = (await ScheduledMeal.GetMeals(Object.assign(new MealSearchCriteria(), {
     MealIdList: mealId,
   })))[0];
 
   return meal;
 }
 
-export async function GetRandomMeal(MealPlanId: number): Promise<MealPlanMealResultType | null> {
-  const meal = await Meal.GetRandomMeal(MealPlanId);
-  const mealData: MealPlanMealResultType = {
-    id: meal.MealId,
+export async function GetRandomMeal(MealPlanId: number): Promise<MealResultType | null> {
+  const meal = await ScheduledMeal.GetRandomRecipe(MealPlanId);
+  const mealData: MealResultType = {
+    id: meal.ScheduledMealID,
     meal_plan_id: meal.MealPlanId,
     meal_id: meal.MealSubId,
     is_full_meal: meal.IsFullMeal,

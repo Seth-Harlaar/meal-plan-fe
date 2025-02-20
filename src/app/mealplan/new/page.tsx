@@ -3,13 +3,10 @@ import React from "react";
 import { GetCurrentUser } from "@/auth/auth";
 import LogInMessage from "@/components/LogInMessage";
 import PageTitle from "@/components/PageTitle";
-import { MealPlan, MealPlanSearchCriteria } from "@/models/MealPlan";
-import { Meal, MealSearchCriteria } from "@/models/Meal";
-import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
-import { MealTime } from "@/models/enums/MealTime";
-import MealListing from "@/components/MealPlanListItem";
+import { MealPlan } from "@/models/MealPlan";
+import { ScheduledMeal } from "@/models/Meal";
 import MealPlanListView from "../MealPlanListView";
-import { MealPlanMealResultType, Zods } from "@/db/db";
+import { MealResultType, Zods } from "@/db/db";
 
 export default async function Home() {
   const user = await GetCurrentUser();
@@ -19,33 +16,26 @@ export default async function Home() {
     );
   }
 
-  // meal plan
-  const newMealPlan = Object.assign(new MealPlan(), {
-    UserId: user.UserId,
-    Name: MealPlan.genericMealPlanName(),
-  });
-
   // meals
-  const newMeals: MealPlanMealResultType[] = [];
+  const newMeals: MealResultType[] = [];
   for(let i = 0; i < 7; i++){
-    const newMeal: MealPlanMealResultType = {
-      id: 0,
+    const randomMeal = await ScheduledMeal.GetRandomRecipe(0);
+    const newMealData: MealResultType = {
+      id: randomMeal.ScheduledMealID,
       meal_plan_id: 0,
-      meal_id: 1,
-      is_full_meal: true,
-      day_for: DaysOfWeek.Sunday,
-      time_for: MealTime.DINNER,
+      meal_id: randomMeal.MealSubId,
+      is_full_meal: randomMeal.IsFullMeal,
+      day_for: i,
+      time_for: randomMeal.TimeFor,
     };
-    newMeals.push(newMeal);
+    newMeals.push(newMealData);
   }
 
   return (
     <>
       <PageTitle titleText="New Meal Plan"/>
-      <PageTitle titleText={newMealPlan.Name}/>
+      <PageTitle titleText={MealPlan.genericMealPlanName()}/>
       <MealPlanListView mealDataList={newMeals} />
     </>
-
   );
 }
-

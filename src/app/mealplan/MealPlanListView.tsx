@@ -1,13 +1,12 @@
 'use client'
 import MealPlanListItem from "@/components/MealPlanListItem";
-import { MealPlanMealResultType } from "@/db/db";
-import { useState, useTransition } from "react";
-import { GetRandomMeal } from "./new/action";
+import { MealResultType } from "@/db/db";
+import { useEffect, useState, useTransition } from "react";
+import { GetRandomMeal, saveMealPlan } from "./new/action";
+import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
 
-
-
-export default function MealPlanListView({mealDataList}: {mealDataList: MealPlanMealResultType[]}){
-  const [meals, setMeals] = useState<(MealPlanMealResultType|null)[]>(mealDataList);
+export default function MealPlanListView({mealDataList}: {mealDataList: MealResultType[]}){
+  const [meals, setMeals] = useState<(MealResultType|null)[]>(mealDataList);
   const [isPending, startTransition] = useTransition();
 
   function rerollItem(index: number) {
@@ -27,10 +26,25 @@ export default function MealPlanListView({mealDataList}: {mealDataList: MealPlan
   }
 
   return (
-    <div className="meal-plan-days">
-      {meals.map((mealData, index) => {
-        return <MealPlanListItem mealData={mealData} rerollFunction={() => rerollItem(index)} key={index}/>
-      })}
-    </div>
+    <>
+      <>
+        {Object.keys(DaysOfWeek)
+          .filter((key) => isNaN(Number(key)))
+          .map((day, index) => {
+            const dayValue = DaysOfWeek[day as keyof typeof DaysOfWeek];
+            return <div className="day" key={index}>
+              <h1>{day}</h1>
+              {meals.filter(m => m?.day_for == dayValue).map((mealData, index) => {
+                return <MealPlanListItem mealData={mealData} rerollFunction={() => rerollItem(index)} key={index}/>
+              })}
+            </div>
+          })
+        }
+      </>
+
+      <div className="meal-plan-days">
+      </div>
+      <button onClick={() => saveMealPlan(meals.filter(m => m != null))} >Save Changes</button>
+    </>
   )
 }

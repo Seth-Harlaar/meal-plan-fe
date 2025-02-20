@@ -2,7 +2,7 @@ import { sql } from "slonik";
 import { z } from 'zod';
 import { DaysOfWeek } from "./enums/DaysOfTheWeek";
 import { MealTime } from "./enums/MealTime";
-import { Database, Zods } from "../db/db";
+import { Database, MealResultType, MealPlanResultType, Zods } from "../db/db";
 import { GetCurrentUser } from "@/auth/auth";
 
 
@@ -45,8 +45,6 @@ export class MealPlan {
     const Criteria = {...DefaultCriteria, ...InputCriteria };
     const pool = await Database.getPool();
     
-    let MealPlans: MealPlan[] = [];
-
     let query = sql.type(Zods.mealPlan)`
       SELECT *
       FROM public.meal_plans
@@ -70,17 +68,14 @@ export class MealPlan {
       ORDER BY id;
     `;
 
-    console.log(query);
-
     try {
-      const results = await pool.query(query);
-      console.log(results);
+      const results = await pool.any(query);
+      const mealPlans = results.map(r => MealPlan.Deserialize(r));
+      return mealPlans;
     } catch (error) {
       console.log('Error while searching for meal plans', error);
       return [];
     }
-
-    return MealPlans;
   }
 
   // public static async GenerateMealPlan(): Promise<MealPlan> {
@@ -119,12 +114,14 @@ export class MealPlan {
       this.MealPlanId = Results.id;
 
     } else {
-      await pool.one(sql.type(z.object({id: z.number()}))`
+      let Results = await pool.one(sql.type(z.object({id: z.number()}))`
         UPDATE meal_plans
           SET user_id = ${User.UserId},
           name = ${this.Name}
+        WHERE id = ${this.MealPlanId}
         RETURNING id;
       `);
+      this.MealPlanId = Results.id
     }
   }
 
@@ -181,6 +178,22 @@ export class MealPlan {
   }
 
 
+
+  public static Serialize(MealPlan: MealPlan): MealPlanResultType {
+    return {
+      id: MealPlan.MealPlanId,
+      name: MealPlan.Name,
+      user_id: MealPlan.UserId,
+    }
+  }
+
+  public static Deserialize(MealPlanData: MealPlanResultType): MealPlan {
+    return Object.assign(new MealPlan(), {
+      MealPlanId: MealPlanData.id,
+      Name: MealPlanData.name,
+      UserId: MealPlanData.user_id,
+    });
+  }
 
   static genericMealPlanName(): string{
     const now = new Date();

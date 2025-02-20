@@ -1,6 +1,6 @@
 import { createPool, DatabasePool, sql } from 'slonik';
 import { z } from 'zod';
-import { Meal } from '../models/Meal';
+import { ScheduledMeal } from '../models/Meal';
 
 export class Database {
   private static pool: DatabasePool;
@@ -16,21 +16,6 @@ export class Database {
 
 // zod type definitions
 export class Zods {
-
-  // full_meals
-  static fullMealObj = z.object({
-    id: z.number(),
-    name: z.string(),
-    prep_time: z.number(),
-    food_id: z.number(),
-  });
-  
-  // partial_meals
-  static partialMealObj = z.object({
-    id: z.number(),
-    food_serial: z.string(),
-  });
-
   // foods
   static foodObj = z.object({
     id: z.number(),
@@ -43,31 +28,25 @@ export class Zods {
   static mealPlan = z.object({
     id: z.number(),
     name: z.string(),
-    user_id: z.string(),
-  });
-
-  // meal_plan_meals
-  static mealPlanMeal = z.object({
-    id: z.number(),
-    meal_plan_id: z.number(),
-    meal_id: z.number(),
-    is_full_meal: z.boolean(),
-    day_for: z.number(),
-    time_for: z.number(),
-  });
-
-  // meal_plan_meals right join meal_plans
-  static mealPlanMealsRJMealPlans = z.object({
-    id: z.number(),
-    meal_plan_id: z.number(),
-    meal_id: z.number(),
-    is_full_meal: z.boolean(),
-    day_for: z.number(),
-    time_for: z.number(),
-    mplan_id: z.number(),
     user_id: z.number(),
-    name: z.string(),
   });
+
+  // meals
+  static mealResult = z.object({
+    id: z.number(),
+    meal_plan_id: z.number(),
+    day_for: z.number(),
+    time_for: z.number(),
+    recipe_id: z.number(),
+  });
+
+  // recipes 
+  static recipeResult = z.object({
+    id: z.number(),
+    name: z.string(),
+    instructions: z.string(),
+    prep_time: z.number(),
+  })
 
   // users
   static userObj = z.object({
@@ -81,18 +60,18 @@ export class Zods {
 
 
 // types
-export type MealPlanMealResultType = z.infer<typeof Zods.mealPlanMeal>;
+export type MealResultType = z.infer<typeof Zods.mealResult>;
 export type FoodResultType = z.infer<typeof Zods.foodObj>;
-
+export type MealPlanResultType = z.infer<typeof Zods.mealPlan>;
 
 // queries
 export class queries {
 
-  static getRandomFoodQuery (isPartialMeal: boolean, Meals: Meal[]) {
+  static getRandomFoodQuery (isPartialMeal: boolean, Meals: ScheduledMeal[]) {
     return sql.type(Zods.foodObj)
       `SELECT * FROM foods
           WHERE type NOT IN (10, 20, 30)
-            ${Meals.length > 0 ? sql.unsafe`AND id NOT IN (${sql.join(Meals.map(x => x.MealId), sql.fragment`, `)})` : sql.unsafe``}
+            ${Meals.length > 0 ? sql.unsafe`AND id NOT IN (${sql.join(Meals.map(x => x.ScheduledMealID), sql.fragment`, `)})` : sql.unsafe``}
           ORDER BY RANDOM()
           LIMIT 1;`
   }
