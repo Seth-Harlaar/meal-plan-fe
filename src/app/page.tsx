@@ -31,7 +31,7 @@ export default async function Home() {
   }
 
   let recipes: Recipe[] = [];
-  if(recipes.length > 0){
+  if(mealList.length > 0){
     recipes = await Recipe.Search(Object.assign(new RecipeSearchCriteria(), {
       RecipeIdList: mealList.map(mp => mp.RecipeId),
     }));
