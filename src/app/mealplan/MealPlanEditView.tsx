@@ -1,11 +1,14 @@
 'use client'
 import MealPlanListItem from "@/components/MealPlanListItem";
-import { MealResultType } from "@/db/db";
+import { MealResultType, RecipeResultType } from "@/db/db";
 import { useEffect, useState, useTransition } from "react";
 import { GetRandomMeal, saveMealPlan } from "./new/action";
 import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
 
-export default function MealPlanListView({mealDataList}: {mealDataList: MealResultType[]}){
+export default function MealPlanEditView(
+  {mealDataList, recipeDataList}: 
+  {mealDataList: MealResultType[], recipeDataList: RecipeResultType[]}
+){
   const [meals, setMeals] = useState<(MealResultType)[]>(mealDataList);
   const [isPending, startTransition] = useTransition();
 
@@ -30,12 +33,13 @@ export default function MealPlanListView({mealDataList}: {mealDataList: MealResu
       <>
         {Object.keys(DaysOfWeek)
           .filter((key) => isNaN(Number(key)))
-          .map((day, index) => {
+          .map((day, dayIndex) => {
             const dayValue = DaysOfWeek[day as keyof typeof DaysOfWeek];
-            return <div className="day" key={index}>
+            return <div className="day" key={dayIndex}>
               <h1>{day}</h1>
               {meals.filter(m => m?.day_for == dayValue).map((mealData, index) => {
-                return <MealPlanListItem mealData={mealData} rerollFunction={() => rerollItem(index)} key={index}/>
+                let mealRecipe = recipeDataList.find(rd => rd.id == mealData.recipe_id) ?? {id: 0, name: "", instructions: "", prep_time: 0};
+                return <MealPlanListItem mealData={mealData} recipeDataFirst={mealRecipe} rerollFunction={() => rerollItem(index)} key={index}/>
               })}
             </div>
           })
@@ -44,7 +48,7 @@ export default function MealPlanListView({mealDataList}: {mealDataList: MealResu
 
       <div className="meal-plan-days">
       </div>
-      <button onClick={() => saveMealPlan(meals.filter(m => m != null))} >Save Changes</button>
+      <button onClick={() => saveMealPlan(meals.filter(m => m != null))}>Save Changes</button>
     </>
   )
 }

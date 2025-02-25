@@ -5,16 +5,21 @@ import './styles/MealListing.css';
 import { FoodResultType, MealResultType, RecipeResultType } from "@/db/db";
 import { GetRecipe } from "@/app/mealplan/new/action";
 
-export default function MealPlanListItem({mealData, rerollFunction}: {mealData: MealResultType, rerollFunction: () => void}){
+export default function MealPlanListItem(
+  {mealData, recipeDataFirst, rerollFunction}: 
+  {mealData: MealResultType, recipeDataFirst: RecipeResultType, rerollFunction: (() => void) | null}
+){
   const mealTimes: string[] = ["Breakfast", "Lunch", "Dinner", "Snack", "Other"];
-  const [recipeData, setRecipeData] = useState<RecipeResultType | null>(null);
+  const [recipeData, setRecipeData] = useState<RecipeResultType | null>(recipeDataFirst);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    startTransition(async () => {
-      const foodDataResult = await GetRecipe(mealData.recipe_id);
-      setRecipeData(foodDataResult);
-    });
+    if(recipeData == null){
+      startTransition(async () => {
+        const foodDataResult = await GetRecipe(mealData.recipe_id);
+        setRecipeData(foodDataResult);
+      });
+    }
   }, [mealData.recipe_id]);
 
   if(!recipeData || !mealData || isPending){
@@ -37,8 +42,10 @@ export default function MealPlanListItem({mealData, rerollFunction}: {mealData: 
       <h3>{mealData == null ? "" : mealTimes[(mealData.time_for)/10]}</h3>
     </div>
     <div className="flex-spacer"></div>
-    <div onClick={rerollFunction}>
-      <RefreshButton />
-    </div>
+    {rerollFunction 
+    ? <div onClick={rerollFunction}>
+        <RefreshButton />
+      </div>
+    : <></>}
   </div>
 }

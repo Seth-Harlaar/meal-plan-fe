@@ -1,10 +1,6 @@
 import { Database, RecipeResultType, Zods } from "@/db/db";
-import { MealSearchCriteria, ScheduledMeal } from "./Meal";
+import { MealSearchCriteria, Meal } from "./Meal";
 import { sql } from "slonik";
-import { DaysOfWeek } from "./enums/DaysOfTheWeek";
-import { MealTime } from "./enums/MealTime";
-
-
 
 
 export default class Recipe {
@@ -12,7 +8,6 @@ export default class Recipe {
   Name: string = "";
   Instructions: string = "";
   PrepTime: number = 0;
-
 
   static async Search(InputCriteria: RecipeSearchCriteria){
     const Criteria = Object.assign(new RecipeSearchCriteria(), InputCriteria);
@@ -53,13 +48,13 @@ export default class Recipe {
     const pool = await Database.getPool();
 
     // const Meals = MealPlan.Days.flatMap(d => Array.from(d.Meals.values()));
-    const Meals = MealPlanId > 0 ? await ScheduledMeal.GetMeals(Object.assign(new MealSearchCriteria(), {
+    const Meals = MealPlanId > 0 ? await Meal.GetMeals(Object.assign(new MealSearchCriteria(), {
       MealIdList: [MealPlanId],
     }))
     : [];
 
     const query = sql.type(Zods.recipeResult)`SELECT * FROM public.recipes
-        ${Meals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(Meals.map(x => x.ScheduledMealID), sql.fragment`, `)})` : sql.unsafe``}
+        ${Meals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(Meals.map(x => x.MealId), sql.fragment`, `)})` : sql.unsafe``}
       ORDER BY RANDOM()
       LIMIT 1;
     `;

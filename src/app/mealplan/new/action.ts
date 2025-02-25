@@ -2,7 +2,7 @@
 import { GetCurrentUser } from "@/auth/auth";
 import { FoodResultType, MealResultType, RecipeResultType, Zods } from "@/db/db";
 import { Food } from "@/models/Food";
-import { ScheduledMeal, MealSearchCriteria } from "@/models/Meal";
+import { Meal, MealSearchCriteria } from "@/models/Meal";
 import { MealPlan } from "@/models/MealPlan";
 import Recipe, { RecipeSearchCriteria } from "@/models/Recipe";
 import { z } from "zod";
@@ -24,7 +24,7 @@ export async function saveMealPlan(newMealData: MealResultType[]) {
 
     // save each meal
     newMealData.forEach(mealData => {
-      let meal = Object.assign(new ScheduledMeal(), {
+      let meal = Object.assign(new Meal(), {
         MealId: mealData.id,
         MealPlanId: newMealPlan.MealPlanId,
         DayFor: mealData.day_for,
@@ -40,7 +40,7 @@ export async function saveMealPlan(newMealData: MealResultType[]) {
 }
 
 export async function GetMeal(mealId: number){
-  const meal = (await ScheduledMeal.GetMeals(Object.assign(new MealSearchCriteria(), {
+  const meal = (await Meal.GetMeals(Object.assign(new MealSearchCriteria(), {
     MealIdList: mealId,
   })))[0];
 

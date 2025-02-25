@@ -4,8 +4,8 @@ import { GetCurrentUser } from "@/auth/auth";
 import LogInMessage from "@/components/LogInMessage";
 import PageTitle from "@/components/PageTitle";
 import { MealPlan } from "@/models/MealPlan";
-import { ScheduledMeal } from "@/models/Meal";
-import MealPlanListView from "../MealPlanListView";
+import { Meal } from "@/models/Meal";
+import MealPlanEditView from "../MealPlanEditView";
 import { MealResultType, Zods } from "@/db/db";
 import Recipe from "@/models/Recipe";
 import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
@@ -36,7 +36,7 @@ export default async function Home() {
     <>
       <PageTitle titleText="New Meal Plan"/>
       <PageTitle titleText={MealPlan.genericMealPlanName()}/>
-      <MealPlanListView mealDataList={newMeals} />
+      <MealPlanEditView mealDataList={newMeals} />
     </>
   );
 }

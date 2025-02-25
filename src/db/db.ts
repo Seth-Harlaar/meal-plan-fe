@@ -1,6 +1,6 @@
 import { createPool, DatabasePool, sql } from 'slonik';
 import { z } from 'zod';
-import { ScheduledMeal } from '../models/Meal';
+import { Meal } from '../models/Meal';
 
 export class Database {
   private static pool: DatabasePool;
@@ -68,11 +68,11 @@ export type RecipeResultType = z.infer<typeof Zods.recipeResult>;
 // queries
 export class queries {
 
-  static getRandomFoodQuery (isPartialMeal: boolean, Meals: ScheduledMeal[]) {
+  static getRandomFoodQuery (isPartialMeal: boolean, Meals: Meal[]) {
     return sql.type(Zods.foodObj)
       `SELECT * FROM foods
           WHERE type NOT IN (10, 20, 30)
-            ${Meals.length > 0 ? sql.unsafe`AND id NOT IN (${sql.join(Meals.map(x => x.ScheduledMealID), sql.fragment`, `)})` : sql.unsafe``}
+            ${Meals.length > 0 ? sql.unsafe`AND id NOT IN (${sql.join(Meals.map(x => x.MealId), sql.fragment`, `)})` : sql.unsafe``}
           ORDER BY RANDOM()
           LIMIT 1;`
   }

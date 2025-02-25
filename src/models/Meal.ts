@@ -8,21 +8,21 @@ import { GetCurrentUser } from "@/auth/auth";
 import { z } from "zod";
 
 // The basis of the meal
-export class ScheduledMeal {
+export class Meal {
   MealPlanId: number = 0;
-  ScheduledMealID: number = 0;
+  MealId: number = 0;
   DayFor: DaysOfWeek = DaysOfWeek.Sunday;
   TimeFor: MealTime = MealTime.DINNER;
   RecipeId: number = 0;
 
-  static async GetMeals(InputCriteria: MealSearchCriteria): Promise<ScheduledMeal[]>{
+  static async GetMeals(InputCriteria: MealSearchCriteria): Promise<Meal[]>{
     const DefaultCriteria = new MealSearchCriteria();
     const Criteria = {...DefaultCriteria, ...InputCriteria };
     const pool = await Database.getPool();
     
     let query = sql.type(Zods.mealResult)`
       SELECT *
-      FROM public.meal_plan_meals
+      FROM public.meals
       WHERE 1=1
  
       ${ // meal plan ids
@@ -41,7 +41,7 @@ export class ScheduledMeal {
     try {
       const results = await pool.any(query);
       let Meals = results.map(meal => Object.assign(
-        new ScheduledMeal(),
+        new Meal(),
         {
           MealId: meal.id,
           MealPlanId: meal.meal_plan_id,
@@ -71,7 +71,7 @@ export class ScheduledMeal {
     }
 
     try {
-      if(this.ScheduledMealID <= 0){
+      if(this.MealId <= 0){
         let Results = await pool.one(sql.type(z.object({id: z.number()}))`
           INSERT INTO meal_plan_meals (meal_plan_id, meal_id, is_full_meal, day_for, time_for)
             VALUES (${this.MealPlanId}, ${this.DayFor}, ${this.TimeFor})
@@ -85,12 +85,12 @@ export class ScheduledMeal {
             SET meal_plan_id = ${this.MealPlanId},
             day_for = ${this.DayFor},
             time_for = ${this.TimeFor}
-          WHERE id = ${this.ScheduledMealID}
+          WHERE id = ${this.MealId}
           RETURNING id;
         `);
       }
     } catch(e) {
-      console.log(`There was an error saving changes to meal with id: ${this.ScheduledMealID}`, e);
+      console.log(`There was an error saving changes to meal with id: ${this.MealId}`, e);
     }
   }
 
@@ -186,6 +186,16 @@ export class ScheduledMeal {
     idList.push(...FoodList.filter(x => x.type != 10 && x.type != 20 && x.type != 30).map(x => x.id).sort()); 
 
     return idList.join('-');
+  }
+
+  public static Serialize(meal: Meal): MealResultType{
+    return {
+      id: meal.MealId,
+      meal_plan_id: meal.MealPlanId,
+      day_for: meal.DayFor,
+      time_for: meal.TimeFor,
+      recipe_id: meal.RecipeId,
+    }
   }
 }
 

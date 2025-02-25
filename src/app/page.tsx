@@ -1,22 +1,47 @@
+'use server'
 import React from "react";
-import PageTitle from "../components/PageTitle";
-import MealListing from "../components/MealPlanListItem";
-import { MealPlan } from "../models/MealPlan";
-import { cookies } from "next/headers";
+import { MealPlan, MealPlanSearchCriteria } from "../models/MealPlan";
+import { GetCurrentUser } from "@/auth/auth";
+import LogInMessage from "@/components/LogInMessage";
+import { Meal, MealSearchCriteria } from "@/models/Meal";
+import MealPlanEditView from "./mealplan/MealPlanEditView";
+import Recipe, { RecipeSearchCriteria } from "@/models/Recipe";
 
 import './page.css'
-import { GetCurrentUser, getSession } from "@/auth/auth";
+import MealPlanListView from "@/components/MealPlanListView";
 
 export default async function Home() {
   const user = await GetCurrentUser();
+  if(!user){
+    return (
+      <LogInMessage/>
+    );
+  }
+
+  const mealPlans = await MealPlan.GetMealPlans(Object.assign(new MealPlanSearchCriteria(), {
+    UserIdList: [user.UserId]
+  }));
+  
+  let mealList: Meal[] = [];
+
+  if(mealPlans[0]){
+    mealList = await Meal.GetMeals(Object.assign(new MealSearchCriteria(), {
+      mealPlanIdList: [mealPlans[0].MealPlanId],
+    }));
+  }
+
+  let recipes: Recipe[] = [];
+  if(recipes.length > 0){
+    recipes = await Recipe.Search(Object.assign(new RecipeSearchCriteria(), {
+      RecipeIdList: mealList.map(mp => mp.RecipeId),
+    }));
+  }
 
   const daysOfWeek: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  // const mealPlans = await MealPlan.GetMealPlans([5]);
 
   if(user){
     return (
       <>
-        {/* <PageTitle titleText={mealPlans[0].Name}/> */}
         <div className="page-splitter">
           {/* Left side */}
           <div id="meal-plan-days" className="left">
@@ -28,16 +53,9 @@ export default async function Home() {
               })} */}
             </select>
 
-            {/* {mealPlans[0].Days.map((day, index) => {
-              return <div key={index} className="day">
-
-                <h1>{daysOfWeek[index]}</h1>
-                {Array.from(day.Meals.entries()).map(([mealTime, mealData], index) => {
-                  return <MealListing mealTitle={mealData.name} mealTime={mealTime} key={index}/>
-                })}
-              </div>
-            })} */}
+            <MealPlanListView mealDataList={mealList.map(m => Meal.Serialize(m))} recipeDataList={recipes.map(r => Recipe.Serialize(r))}/>
           </div>
+
           {/* Right side */}
           <div id="meal-plans" className="right">
             <h1>Meal Plans</h1>

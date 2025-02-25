@@ -1,11 +1,11 @@
 'use server'
 
 import PageTitle from "@/components/PageTitle";
-import MealPlanListView from "../MealPlanListView";
+import MealPlanEditView from "../MealPlanEditView";
 import LogInMessage from "@/components/LogInMessage";
 import { GetCurrentUser } from "@/auth/auth";
 import { MealPlan, MealPlanSearchCriteria } from "@/models/MealPlan";
-import { ScheduledMeal, MealSearchCriteria } from "@/models/Meal";
+import { Meal, MealSearchCriteria } from "@/models/Meal";
 import { MealResultType } from "@/db/db";
 
 export default async function Page({params}: {params: Promise<{ MealPlanId: number }>}) {
@@ -29,13 +29,13 @@ export default async function Page({params}: {params: Promise<{ MealPlanId: numb
     return <>Invalid meal plan ID.</>
   }
 
-  const meals = await ScheduledMeal.GetMeals(Object.assign(new MealSearchCriteria(), {
+  const meals = await Meal.GetMeals(Object.assign(new MealSearchCriteria(), {
     MealPLanIdList: [MealPlanId],
   }));
 
   const mealData: MealResultType[] = meals.map(m => {
     return {
-      id: m.ScheduledMealID,
+      id: m.MealId,
       meal_plan_id: m.MealPlanId,
       day_for: m.DayFor,
       time_for: m.TimeFor,
@@ -47,7 +47,7 @@ export default async function Page({params}: {params: Promise<{ MealPlanId: numb
     <>
       <PageTitle titleText="Meal Plan"/>
       <PageTitle titleText={MealPlan.genericMealPlanName()}/>
-      <MealPlanListView mealDataList={mealData} />
+      <MealPlanEditView mealDataList={mealData} />
     </>
   );
 }
