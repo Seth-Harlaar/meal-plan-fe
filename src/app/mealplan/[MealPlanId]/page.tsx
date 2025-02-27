@@ -7,6 +7,7 @@ import { GetCurrentUser } from "@/auth/auth";
 import { MealPlan, MealPlanSearchCriteria } from "@/models/MealPlan";
 import { Meal, MealSearchCriteria } from "@/models/Meal";
 import { MealResultType } from "@/db/db";
+import Recipe, { RecipeSearchCriteria } from "@/models/Recipe";
 
 export default async function Page({params}: {params: Promise<{ MealPlanId: number }>}) {
   const MealPlanId = (await params).MealPlanId;
@@ -33,21 +34,20 @@ export default async function Page({params}: {params: Promise<{ MealPlanId: numb
     MealPLanIdList: [MealPlanId],
   }));
 
-  const mealData: MealResultType[] = meals.map(m => {
-    return {
-      id: m.MealId,
-      meal_plan_id: m.MealPlanId,
-      day_for: m.DayFor,
-      time_for: m.TimeFor,
-      recipe_id: m.RecipeId,
-    };
-  });
+  const mealData: MealResultType[] = meals.map(m => m.Serialize());
+
+  let recipes: Recipe[] = [];
+  if(meals.length > 0){
+    recipes = await Recipe.Search(Object.assign(new RecipeSearchCriteria(), {
+      RecipeIdList: meals.map(m => m.RecipeId),
+    }));
+  }
 
   return (
     <>
       <PageTitle titleText="Meal Plan"/>
       <PageTitle titleText={MealPlan.genericMealPlanName()}/>
-      <MealPlanEditView mealDataList={mealData} />
+      <MealPlanEditView mealDataList={mealData} recipeDataList={recipes.map(r => r.Serialize())} />
     </>
   );
 }

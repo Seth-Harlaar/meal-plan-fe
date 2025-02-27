@@ -73,18 +73,19 @@ export class Meal {
     try {
       if(this.MealId <= 0){
         let Results = await pool.one(sql.type(z.object({id: z.number()}))`
-          INSERT INTO meal_plan_meals (meal_plan_id, meal_id, is_full_meal, day_for, time_for)
-            VALUES (${this.MealPlanId}, ${this.DayFor}, ${this.TimeFor})
+          INSERT INTO meals (meal_plan_id, day_for, time_for, recipe_id)
+            VALUES (${this.MealPlanId}, ${this.DayFor}, ${this.TimeFor}, ${this.RecipeId})
           RETURNING id;
         `);
         this.MealPlanId = Results.id;
 
       } else {
         await pool.one(sql.type(z.object({id: z.number()}))`
-          UPDATE meal_plan_meals
+          UPDATE meals
             SET meal_plan_id = ${this.MealPlanId},
             day_for = ${this.DayFor},
-            time_for = ${this.TimeFor}
+            time_for = ${this.TimeFor},
+            recipe_id = ${this.RecipeId}
           WHERE id = ${this.MealId}
           RETURNING id;
         `);
@@ -99,78 +100,6 @@ export class Meal {
   // * * * * * * * * * * * * * * * * * * * * * *
 
   
-
-  
-  // // creates a partial meal in the db w/ purely random picks 
-  // // of the parts of the meal
-  // static async CreatePartialMeal(): Promise<void> {
-  //   const pool = await Database.getPool();
-
-  //   // get all serial numbers
-  //   const partialMealList = await pool.any(
-  //     sql.type(Zods.partialMealObj)`SELECT * FROM partial_meals
-  //         ORDER BY id ASC;
-  //     `);
-
-  //   const serials = partialMealList.map(x => x.food_serial);
-
-  //   // make new one
-  //   do {
-  //     // get 3 random foods
-  //     var randomMain = await pool.one(
-  //         sql.type(Zods.foodObj)`SELECT * FROM foods
-  //             WHERE food_type = 10
-  //           ORDER BY RANDOM()
-  //           LIMIT 1;
-  //         `);
-          
-  //     var randomVeggie = await pool.one(
-  //       sql.type(Zods.foodObj)`SELECT * FROM foods
-  //           WHERE food_type = 20
-  //         ORDER BY RANDOM()
-  //         LIMIT 1;
-  //       `);
-        
-  //     var randomSide = await pool.one(
-  //       sql.type(Zods.foodObj)`SELECT * FROM foods
-  //           WHERE food_type = 30
-  //         ORDER BY RANDOM()
-  //         LIMIT 1;
-  //       `);
-
-  //     // create food list and generate new serial number
-  //     var Foods: Food[] = [
-  //       Object.assign(new Food(FoodType.MAIN, randomMain.id), {name: randomMain.name, prepTime: randomMain.prep_time }),
-  //       Object.assign(new Food(FoodType.SIDE, randomSide.id), {name: randomSide.name, prepTime: randomSide.prep_time }),
-  //       Object.assign(new Food(FoodType.VEGETABLE, randomVeggie.id), {name: randomVeggie.name, prepTime: randomVeggie.prep_time }),
-  //     ];
-
-  //   } while (serials.includes(newSerial))
-
-  //   if(newSerial != ''){
-
-  //     // insert new partial meal
-  //     const newPartialMeal = await pool.one(sql.type(Zods.partialMealObj)`
-  //         INSERT INTO partial_meals (food_serial)
-  //         VALUES (${newSerial})
-  //         RETURNING id, food_serial;
-  //       `);
-
-  //     // insert partial meal foods
-  //     if(newPartialMeal && newPartialMeal.id){
-  //       await pool.query(sql.unsafe`
-  //           INSERT INTO partial_meals_foods (partial_meal_id, food_id)
-  //           VALUES
-  //             (${newPartialMeal.id}, ${randomMain.id}),
-  //             (${newPartialMeal.id}, ${randomSide.id}),
-  //             (${newPartialMeal.id}, ${randomVeggie.id});
-  //         `);
-  //     }
-
-  //     console.log(`Inserted new partial meal with id of ${newPartialMeal.id} and serial of ${newSerial}`);
-  //   }
-  // }
-
 
 
   // * * * * * * * * * * * * * * * * * * * * * *
@@ -197,6 +126,17 @@ export class Meal {
       recipe_id: meal.RecipeId,
     }
   }
+
+  public Serialize(): MealResultType {
+    return {
+      id: this.MealId,
+      meal_plan_id: this.MealPlanId,
+      day_for: this.DayFor,
+      time_for: this.TimeFor,
+      recipe_id: this.RecipeId,
+    }
+  }
+  
 }
 
 

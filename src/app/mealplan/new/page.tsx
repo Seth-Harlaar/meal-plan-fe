@@ -7,7 +7,7 @@ import { MealPlan } from "@/models/MealPlan";
 import { Meal } from "@/models/Meal";
 import MealPlanEditView from "../MealPlanEditView";
 import { MealResultType, Zods } from "@/db/db";
-import Recipe from "@/models/Recipe";
+import Recipe, { RecipeSearchCriteria } from "@/models/Recipe";
 import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
 
 export default async function Home() {
@@ -32,11 +32,18 @@ export default async function Home() {
     newMeals.push(newMealData);
   }
 
+  let recipes: Recipe[] = [];
+  if(newMeals.length > 0){
+    recipes = await Recipe.Search(Object.assign(new RecipeSearchCriteria(), {
+      RecipeIdList: newMeals.map(m => m.recipe_id),
+    }));
+  }
+
   return (
     <>
       <PageTitle titleText="New Meal Plan"/>
       <PageTitle titleText={MealPlan.genericMealPlanName()}/>
-      <MealPlanEditView mealDataList={newMeals} />
+      <MealPlanEditView mealDataList={newMeals} recipeDataList={recipes.map(r => Recipe.Serialize(r))} />
     </>
   );
 }

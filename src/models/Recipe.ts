@@ -77,6 +77,15 @@ export default class Recipe {
     }
   }
 
+  public Serialize(): RecipeResultType {
+    return {
+      id: this.RecipeId,
+      name: this.Name,
+      instructions: this.Instructions,
+      prep_time: this.PrepTime,
+    }
+  }
+
   static Deserialize(RecipeData: RecipeResultType): Recipe {
     return Object.assign(new Recipe(), {
       RecipeId: RecipeData.id,
