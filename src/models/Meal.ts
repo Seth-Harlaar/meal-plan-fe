@@ -26,13 +26,13 @@ export class Meal {
       WHERE 1=1
  
       ${ // meal plan ids
-        (Criteria.MealPLanIdList.length > 0) 
-        ? sql.fragment`AND meal_plan_id IN (${sql.join(Criteria.MealPLanIdList, sql.fragment`, `)})`
+        (Criteria.MealPlanIdList.length > 0) 
+        ? sql.fragment`AND meal_plan_id IN (${sql.join(Criteria.MealPlanIdList, sql.fragment`, `)})`
         : sql.fragment``}
 
-      ${ // user ids
+      ${ // recipe ids
         (Criteria.MealIdList.length > 0)
-        ? sql.fragment`AND meal_id IN (${sql.join(Criteria.MealIdList, sql.fragment`, `)})`
+        ? sql.fragment`AND recipe_id IN (${sql.join(Criteria.MealIdList, sql.fragment`, `)})`
         : sql.fragment``}
 
       ORDER BY id;
@@ -140,77 +140,7 @@ export class Meal {
 }
 
 
-
-//   foodList: Food[] = [];
-
-//   constructor(mealId: number, mealSubId:number, name: string, prepTime: number, foodList: Food[]) {
-//     super(mealId, mealSubId, name, prepTime);
-//     this.foodList = foodList;
-//   }
-
-//     if(MealIds.length <= 0){
-//       return [];
-//     }
-
-//     const pool = await Database.getPool();
-
-
-//     for(let i = 0; i < MealIds.length; i++){
-//       const foods = await pool.many(
-//         sql.type(Zods.foodObj)`
-//           SELECT 
-//             partial_meals_foods.partial_meal_id, food_id,
-//             food_type, name, prep_time
-//           FROM public.partial_meals_foods
-//           RIGHT JOIN foods ON partial_meals_foods.food_id = foods.id
-//             WHERE partial_meals_foods.id IS NOT NULL
-//             AND partial_meal_id = ${MealIds[i]}
-//           ORDER BY partial_meals_foods.id ASC;
-//         `
-//       );
-  
-//       var FoodList: Food[] = foods.map(f => new Food(f.id, f.type, f.name, f.prep_time));
-//       const prepTime = FoodList.map(x => x.prepTime).reduce((prev, cur) => prev + cur);
-//       const name = FoodList.map(f => f.name).join(', ');
-
-//       Meals.push(new PartialMeal(MealIds[i], 1, name, prepTime, FoodList));
-//     }
-
-//     return Meals;
-//   }
-// }
-
-
-//   foodId: number = 0;
-
-//     if(MealIds.length <= 0){
-//       return [];
-//     }
-
-//     const pool = await Database.getPool();
-
-//     const mealObjs = await pool.any(
-//       sql.type(Zods.fullMealObj)`
-//         SELECT * FROM full_meals
-//           WHERE id IN (${sql.join(MealIds, sql.fragment`, `)})
-//       `
-//     );
-
-//     return mealObjs.map(o => new FullMeal(o.id, o.name, o.prep_time, o.food_id));
-//   }
-
-//   static async GetFullMealInfo()
-// }
-
-
-
-
-
-
-
-
-
 export class MealSearchCriteria {
-  MealPLanIdList: number[] = [];
+  MealPlanIdList: number[] = [];
   MealIdList: number[] = [];
 }

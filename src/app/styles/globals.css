@@ -66,3 +66,11 @@ body {
   height: 20pt;
   width: 20pt;
 }
+
+
+
+
+/* layouts */
+.max-width-1000 {
+  max-width: 1000px;
+}

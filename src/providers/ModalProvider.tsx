@@ -4,19 +4,19 @@ import React, { createContext, useState } from "react";
 
 import Modal from "../components/Modal";
 
-const ModalContext = createContext<ModalContextType>({
-    modalVisible: false,
-    modalChildren: null,
-    openModal: () => {},
-    closeModal: () => {},
-});
-
 type ModalContextType = {
   modalVisible: boolean;
   modalChildren: React.ReactNode;
-  openModal: ({component}: {component: React.ReactNode}) => void;
+  openModal: (component: React.ReactNode) => void;
   closeModal: () => void;
 }
+
+const ModalContext = createContext<ModalContextType>({
+  modalVisible: false,
+  modalChildren: null,
+  openModal: () => {},
+  closeModal: () => {},
+});
 
 function ModalProvider({children}: {children: React.ReactNode}){
   const [modalVisible, setModalVisible] = useState(false);
@@ -26,7 +26,7 @@ function ModalProvider({children}: {children: React.ReactNode}){
     setModalVisible(false);
   }
 
-  function openModal({component}: {component: React.ReactNode}){
+  function openModal(component: React.ReactNode){
     setModalChildren(component);
     setModalVisible(true);
   }

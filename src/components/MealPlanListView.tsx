@@ -8,9 +8,6 @@ export default function MealPlanListView(
   {mealDataList, recipeDataList}: 
   {mealDataList: MealResultType[], recipeDataList: RecipeResultType[]}
 ){
-  const [meals, setMeals] = useState<(MealResultType)[]>(mealDataList);
-  const [isPending, startTransition] = useTransition();
-
   return (
     <>
       {Object.keys(DaysOfWeek)
@@ -19,9 +16,9 @@ export default function MealPlanListView(
           const dayValue = DaysOfWeek[day as keyof typeof DaysOfWeek];
           return <div className="day" key={dayIndex}>
             <h1>{day}</h1>
-            {meals.filter(m => m?.day_for == dayValue).map((mealData, index) => {
+            {mealDataList.filter(m => m?.day_for == dayValue).map((mealData, index) => {
               let mealRecipe = recipeDataList.find(rd => rd.id == mealData.recipe_id) ?? {id: 0, name: "", instructions: "", prep_time: 0};
-              return <MealPlanListItem mealData={mealData} recipeDataFirst={mealRecipe} rerollFunction={null} key={index}/>
+              return <MealPlanListItem mealData={mealData} recipeData={mealRecipe} rerollFunction={null} editFunction={null} key={index}/>
             })}
           </div>
         })

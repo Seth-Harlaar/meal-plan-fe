@@ -14,6 +14,10 @@ nav > h1 {
   line-height: 60px;
 }
 
+nav a {
+  text-decoration: none;
+  color: white;
+}
 
 nav .left {
   display: flex;

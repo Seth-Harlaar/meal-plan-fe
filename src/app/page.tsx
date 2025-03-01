@@ -26,7 +26,7 @@ export default async function Home() {
 
   if(mealPlans[0]){
     mealList = await Meal.GetMeals(Object.assign(new MealSearchCriteria(), {
-      mealPlanIdList: [mealPlans[0].MealPlanId],
+      MealPlanIdList: [mealPlans[0].MealPlanId],
     }));
   }
 

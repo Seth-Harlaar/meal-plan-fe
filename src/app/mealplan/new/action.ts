@@ -14,7 +14,10 @@ export async function saveMealPlan(newMealData: MealResultType[]) {
     return null;
   }
 
+  const mealPlanId = newMealData[0].meal_plan_id;
+
   const newMealPlan = Object.assign(new MealPlan(), {
+    MealPlanId: mealPlanId,
     UserId: user.UserId,
     Name: MealPlan.genericMealPlanName(),
   });
@@ -47,7 +50,7 @@ export async function GetMeal(mealId: number){
   return meal;
 }
 
-export async function GetRandomMeal(MealPlanId: number): Promise<RecipeResultType | null> {
+export async function GetRandomRecipe(MealPlanId: number): Promise<RecipeResultType | null> {
   const recipe = await Recipe.GetRandomRecipe(MealPlanId);
   const recipeData: RecipeResultType = {
     id: recipe.RecipeId,
@@ -58,17 +61,8 @@ export async function GetRandomMeal(MealPlanId: number): Promise<RecipeResultTyp
   return recipeData;
 }
 
-export async function GetRecipe(RecipeId: number): Promise<RecipeResultType | null> {
-  if(RecipeId == -1){
-    return null;
-  }
-
-  const RecipeResult = (await Recipe.Search(Object.assign(new RecipeSearchCriteria(), {
-    RecipeIdList: [RecipeId],
-  })))[0];
-  if(RecipeResult == null){
-    return null;
-  }
-
-  return Recipe.Serialize(RecipeResult);
+export async function GetRecipes(Criteria: object): Promise<RecipeResultType[]> {
+  const RecipeCriteria = new RecipeSearchCriteria(Criteria);
+  const Results = await Recipe.Search(RecipeCriteria);
+  return Results.map(r => r.Serialize());
 };

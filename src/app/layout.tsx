@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import "./styles/globals.css";
 import Providers from "../providers/providers";
 import Navbar from "../components/Navbar";
 
 // css
+import "./styles/globals.css";
 import './styles/components.css';
 import './styles/variables.css';
 import './styles/dark-theme.css';

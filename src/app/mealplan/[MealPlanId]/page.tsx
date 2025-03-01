@@ -31,7 +31,7 @@ export default async function Page({params}: {params: Promise<{ MealPlanId: numb
   }
 
   const meals = await Meal.GetMeals(Object.assign(new MealSearchCriteria(), {
-    MealPLanIdList: [MealPlanId],
+    MealPlanIdList: [MealPlanId],
   }));
 
   const mealData: MealResultType[] = meals.map(m => m.Serialize());

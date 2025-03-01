@@ -24,10 +24,10 @@
 }
 
 #modal {
-  height: 65%;
+  height: 80%;
   width: 65%;
-  background: white;
-  color: black;
+  background: var(--bg-secondary);
+  color: white;
   border-radius: 5px;
   padding: 16px;
 }

@@ -7,7 +7,7 @@ export default async function Navbar(){
 
   return <nav>
     <div className="left">
-      <span>Meal Planner</span>
+      <a href="/"><span>Meal Planner</span></a>
       <span className='link'>Plans</span>
       <span className='link'>Meals</span>
       <span className='link'>Foods</span>

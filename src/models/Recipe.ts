@@ -54,7 +54,7 @@ export default class Recipe {
     : [];
 
     const query = sql.type(Zods.recipeResult)`SELECT * FROM public.recipes
-        ${Meals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(Meals.map(x => x.MealId), sql.fragment`, `)})` : sql.unsafe``}
+        ${Meals.length > 0 ?  sql.unsafe`WHERE id NOT IN (${sql.join(Meals.map(x => x.RecipeId), sql.fragment`, `)})` : sql.unsafe``}
       ORDER BY RANDOM()
       LIMIT 1;
     `;
@@ -102,6 +102,16 @@ export class RecipeSearchCriteria {
   Name: string = "";
   PrepTimeGreaterThan: number = 0;
   PrepTimeLessThan: number = 0;
+
+  constructor(data?: Record<string, any>) {
+    if (data) {
+      Object.keys(data).forEach((key) => {
+        if (key in this) {
+          (this as any)[key] = data[key];
+        }
+      });
+    }
+  }
 }
 
 

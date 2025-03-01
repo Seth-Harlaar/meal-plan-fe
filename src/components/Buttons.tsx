@@ -8,3 +8,9 @@ export function RefreshButton(){
     <img className="icon refresh-button" src="/icons/refresh.svg"/>
   )
 }
+
+export function EditButtion(){
+  return (
+    <img className="icon edit-button" src="/icons/pencil.svg"/>
+  )
+}
