@@ -9,7 +9,19 @@ export default function Modal({children}: {children: React.ReactNode}){
   return <div id="modal-container">
     <div id="modal-exit" onClick={() => {modal.closeModal()}}></div>
     <div id="modal">
-      {children}
+      <div>
+        {children}
+      </div>
+      { modal.modalErrors.length > 0 ?
+        <div className="errors">
+          <ul>
+            {modal.modalErrors.map((error, index) => {
+              return <li key={index}>{error}</li>
+            })}
+          </ul>
+        </div>
+        : null
+      }
     </div>
   </div>
 }

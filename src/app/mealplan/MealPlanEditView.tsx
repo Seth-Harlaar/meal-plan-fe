@@ -6,14 +6,19 @@ import { GetRandomRecipe, saveMealPlan } from "./new/action";
 import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
 import { ModalContext } from "@/providers/ModalProvider";
 import EditMealPopup from "./EditMealPopup";
+import { MealTime } from "@/models/enums/MealTime";
 
 export default function MealPlanEditView(
-  {mealDataList, recipeDataList}: 
+  {mealDataList, recipeDataList}:
   {mealDataList: MealResultType[], recipeDataList: RecipeResultType[]}
 ){
   const [meals, setMeals] = useState<MealResultType[]>(mealDataList);
   const {openModal} = useContext(ModalContext);
   const [isPending, startTransition] = useTransition();
+
+  function addMealToPlan(mealData: MealResultType){
+    setMeals(mealList => [...mealList, mealData]);
+  }
 
   function replaceRecipe(mealData: MealResultType, recipeId: number){
     let mealIndex = meals.indexOf(mealData);
@@ -31,8 +36,21 @@ export default function MealPlanEditView(
     });
   }
 
-  function modalFunction(mealData: MealResultType){
-    openModal(<EditMealPopup mealData={mealData} replaceRecipe={replaceRecipe}/>);
+  function openEditMealModal(mealData: MealResultType){
+    openModal(<EditMealPopup mealData={mealData} recipeDataList={recipeDataList} replaceRecipe={replaceRecipe}/>);
+  }
+
+  function addRandomMealToDay(dayOfWeek: number){
+    const randomRecipe = recipeDataList[Math.floor(Math.random() * recipeDataList.length) + 1];
+    const mealPlanId = mealDataList[0].meal_plan_id;
+    const newMealData: MealResultType = {
+      id: 0,
+      meal_plan_id: mealPlanId,
+      day_for: dayOfWeek as DaysOfWeek,
+      time_for: MealTime.DINNER,
+      recipe_id: randomRecipe.id,
+    };
+    addMealToPlan(newMealData);
   }
 
   return (
@@ -47,7 +65,9 @@ export default function MealPlanEditView(
               {meals.filter(m => m?.day_for == dayValue).map((mealData, index) => {
                 let mealRecipe = recipeDataList.find(rd => rd.id == mealData.recipe_id) ?? {id: 0, name: "", instructions: "", prep_time: 0};
                 return <MealPlanListItem mealData={mealData} recipeData={mealRecipe} key={index}
-                  rerollFunction={() => rerollRecipe(mealData)} editFunction={() => modalFunction(mealData)} />
+                  rerollFunction={() => rerollRecipe(mealData)} editFunction={() => openEditMealModal(mealData)} 
+                  addMealFunction={() => addRandomMealToDay(dayValue)}
+                  />
               })}
             </div>
           })

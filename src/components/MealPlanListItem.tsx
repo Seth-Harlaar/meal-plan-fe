@@ -1,12 +1,14 @@
 'use client'
-import { EditButtion, RefreshButton } from "./Buttons";
+import { EditButton, PlusButton, RefreshButton } from "./Buttons";
 import './styles/MealListing.css';
 import { FoodResultType, MealResultType, RecipeResultType } from "@/db/db";
 
 export default function MealPlanListItem(
-  {mealData, recipeData, rerollFunction, editFunction}: 
+  {mealData, recipeData, rerollFunction, editFunction, addMealFunction}: 
   {mealData: MealResultType, recipeData: RecipeResultType, 
-    rerollFunction: (() => void) | null, editFunction: (() => void) | null}
+    rerollFunction: (() => void) | null, editFunction: (() => void) | null,
+    addMealFunction: (() => void) | null,
+  }
 ){
   const mealTimes: string[] = ["Breakfast", "Lunch", "Dinner", "Snack", "Other"];
 
@@ -32,9 +34,15 @@ export default function MealPlanListItem(
     <div className="flex-spacer"></div>
     {editFunction && 
       <div onClick={editFunction}>
-        <EditButtion />
+        <EditButton />
       </div>
     }
+    {addMealFunction &&
+      <div onClick={addMealFunction}>
+        <PlusButton />
+      </div>
+    }
+
     {rerollFunction && 
       <div onClick={rerollFunction}>
         <RefreshButton />

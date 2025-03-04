@@ -38,9 +38,7 @@ export default async function Page({params}: {params: Promise<{ MealPlanId: numb
 
   let recipes: Recipe[] = [];
   if(meals.length > 0){
-    recipes = await Recipe.Search(Object.assign(new RecipeSearchCriteria(), {
-      RecipeIdList: meals.map(m => m.RecipeId),
-    }));
+    recipes = await Recipe.Search(new RecipeSearchCriteria());
   }
 
   return (

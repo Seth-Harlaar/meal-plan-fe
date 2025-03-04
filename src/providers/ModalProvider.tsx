@@ -7,22 +7,38 @@ import Modal from "../components/Modal";
 type ModalContextType = {
   modalVisible: boolean;
   modalChildren: React.ReactNode;
+  modalErrors: string[];
   openModal: (component: React.ReactNode) => void;
   closeModal: () => void;
+  addModalError: (errorMessage: string) => void,
+  clearModalErrors: () => void;
 }
 
 const ModalContext = createContext<ModalContextType>({
   modalVisible: false,
   modalChildren: null,
+  modalErrors: [],
   openModal: () => {},
   closeModal: () => {},
+  addModalError: () => {},
+  clearModalErrors: () => {},
 });
 
 function ModalProvider({children}: {children: React.ReactNode}){
   const [modalVisible, setModalVisible] = useState(false);
   const [modalChildren, setModalChildren] = useState<React.ReactNode>(null);
+  const [modalErrors, setModalErrors] = useState<string[]>([]);
+
+  function addError(errorMessage: string){
+    setModalErrors(prevErrors =>  [...prevErrors, errorMessage]);
+  }
+
+  function clearErrors(){
+    setModalErrors([]);
+  }
 
   function closeModal(){
+    clearErrors();
     setModalVisible(false);
   }
 
@@ -34,8 +50,11 @@ function ModalProvider({children}: {children: React.ReactNode}){
   const contextValue: ModalContextType = {
     modalVisible,
     modalChildren,
+    modalErrors,
     openModal,
     closeModal,
+    addModalError: addError,
+    clearModalErrors: clearErrors,
   }
 
   return(

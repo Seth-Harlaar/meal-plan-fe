@@ -9,8 +9,14 @@ export function RefreshButton(){
   )
 }
 
-export function EditButtion(){
+export function EditButton(){
   return (
     <img className="icon edit-button" src="/icons/pencil.svg"/>
+  )
+}
+
+export function PlusButton(){
+  return (
+    <img className="icon plus-button" src="/icons/plus.svg"/>
   )
 }

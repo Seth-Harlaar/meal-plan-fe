@@ -9,6 +9,7 @@ import MealPlanEditView from "../MealPlanEditView";
 import { MealResultType, Zods } from "@/db/db";
 import Recipe, { RecipeSearchCriteria } from "@/models/Recipe";
 import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
+import { MealTime } from "@/models/enums/MealTime";
 
 export default async function Home() {
   const user = await GetCurrentUser();
@@ -26,7 +27,7 @@ export default async function Home() {
       id: 0,
       meal_plan_id: 0,
       day_for: i as DaysOfWeek,
-      time_for: DaysOfWeek.Sunday,
+      time_for: MealTime.DINNER,
       recipe_id: randomRecipe.RecipeId,
     };
     newMeals.push(newMealData);
@@ -34,9 +35,7 @@ export default async function Home() {
 
   let recipes: Recipe[] = [];
   if(newMeals.length > 0){
-    recipes = await Recipe.Search(Object.assign(new RecipeSearchCriteria(), {
-      RecipeIdList: newMeals.map(m => m.recipe_id),
-    }));
+    recipes = await Recipe.Search(new RecipeSearchCriteria());
   }
 
   return (
