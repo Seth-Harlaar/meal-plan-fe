@@ -1,6 +1,8 @@
 import { Database, RecipeResultType, Zods } from "@/db/db";
 import { MealSearchCriteria, Meal } from "./Meal";
 import { sql } from "slonik";
+import { GetCurrentUser } from "@/auth/auth";
+import { z } from "zod";
 
 
 export default class Recipe {
@@ -8,6 +10,41 @@ export default class Recipe {
   Name: string = "";
   Instructions: string = "";
   PrepTime: number = 0;
+
+
+  public async SaveChanges(): Promise<void> {
+    const pool = await Database.getPool();
+    const User = await GetCurrentUser();
+    
+    // save meal plan to db
+    if(User == null){
+      console.log('User could not be authenticated.');
+      return;
+    }
+
+    try {
+      if(this.RecipeId <= 0){
+        let Results = await pool.one(sql.type(z.object({id: z.number()}))`
+          INSERT INTO recipes (name, instructions, prep_time)
+            VALUES (${this.Name}, ${this.Instructions}, ${this.PrepTime})
+          RETURNING id;
+        `);
+        this.RecipeId = Results.id;
+
+      } else {
+        await pool.one(sql.type(z.object({id: z.number()}))`
+          UPDATE meals
+            SET name = ${this.Name},
+            instructions = ${this.Instructions},
+            prep_time = ${this.PrepTime},
+          WHERE id = ${this.RecipeId}
+          RETURNING id;
+        `);
+      }
+    } catch(e) {
+      console.log(`There was an error saving changes to meal with id: ${this.RecipeId}`, e);
+    }
+  }
 
   static async Search(InputCriteria: RecipeSearchCriteria){
     const Criteria = Object.assign(new RecipeSearchCriteria(), InputCriteria);
@@ -103,14 +140,8 @@ export class RecipeSearchCriteria {
   PrepTimeGreaterThan: number = 0;
   PrepTimeLessThan: number = 0;
 
-  constructor(data?: Record<string, any>) {
-    if (data) {
-      Object.keys(data).forEach((key) => {
-        if (key in this) {
-          (this as any)[key] = data[key];
-        }
-      });
-    }
+  constructor(init?: Partial<RecipeSearchCriteria>) {
+    Object.assign(this, init);
   }
 }
 

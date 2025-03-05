@@ -12,6 +12,7 @@ type ModalContextType = {
   closeModal: () => void;
   addModalError: (errorMessage: string) => void,
   clearModalErrors: () => void;
+  setModalError: (errorMessage: string) => void,
 }
 
 const ModalContext = createContext<ModalContextType>({
@@ -22,6 +23,7 @@ const ModalContext = createContext<ModalContextType>({
   closeModal: () => {},
   addModalError: () => {},
   clearModalErrors: () => {},
+  setModalError: () => {},
 });
 
 function ModalProvider({children}: {children: React.ReactNode}){
@@ -31,6 +33,10 @@ function ModalProvider({children}: {children: React.ReactNode}){
 
   function addError(errorMessage: string){
     setModalErrors(prevErrors =>  [...prevErrors, errorMessage]);
+  }
+
+  function setError(errorMessage: string){
+    setModalErrors([errorMessage]);
   }
 
   function clearErrors(){
@@ -54,6 +60,7 @@ function ModalProvider({children}: {children: React.ReactNode}){
     openModal,
     closeModal,
     addModalError: addError,
+    setModalError: setError,
     clearModalErrors: clearErrors,
   }
 

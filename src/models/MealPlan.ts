@@ -5,35 +5,9 @@ import { MealTime } from "./enums/MealTime";
 import { Database, MealResultType, MealPlanResultType, Zods } from "../db/db";
 import { GetCurrentUser } from "@/auth/auth";
 
-
-
-// export class Day {
-//   Day: DaysOfWeek = DaysOfWeek.Sunday;
-//   Meals = new Map<MealTime, Meal>();
-
-//   public setMeal(MealTime: MealTime, Meal: Meal | null): void {
-//     if(Meal){
-//       this.Meals.set(MealTime, Meal);
-//     }
-//   }
-
-//   constructor(Day: DaysOfWeek){
-//     this.Day = Day;
-//   }
-
-//   toJSON() {
-//     return {
-//       Day: this.Day,
-//       Meals: Object.fromEntries(this.Meals),
-//     };
-//   }
-// }
-
-
-
 export class MealPlan {
   MealPlanId: number = 0;
-  UserId: number = 0;
+  CreatedByUserId: number = 0;
   Name: string = "";
 
   // * * * * * * * * * * * * * * * * * * * * * *
@@ -56,8 +30,8 @@ export class MealPlan {
         : sql.fragment``}
 
       ${ // user ids
-        (Criteria.UserIdList.length > 0)
-        ? sql.fragment`AND user_id IN (${sql.join(Criteria.UserIdList, sql.fragment`, `)})`
+        (Criteria.CreatedByUserIdList.length > 0)
+        ? sql.fragment`AND created_by_user_id IN (${sql.join(Criteria.CreatedByUserIdList, sql.fragment`, `)})`
         : sql.fragment``}
 
       ${ // name
@@ -78,21 +52,6 @@ export class MealPlan {
     }
   }
 
-  // public static async GenerateMealPlan(): Promise<MealPlan> {
-  //   let NewMealPlan: MealPlan = new MealPlan();
-
-  //   // meal for each day - dinners only right now
-  //   for(let i = 0; i < 7; i++){
-  //     let newDay = new Day(i as DaysOfWeek);
-  //     let newMeal = await Meal.GetRandomMeal(NewMealPlan);
-  //     newDay.setMeal(30 as MealTime, newMeal);
-  //   }
-
-  //   // get this or use user input
-  //   const mealPlanName = MealPlan.genericMealPlanName();
-
-  //   return NewMealPlan;
-  // }
 
   // save meal plan
   public async SaveChanges(): Promise<void> {
@@ -107,7 +66,7 @@ export class MealPlan {
 
     if(this.MealPlanId <= 0){
       let Results = await pool.one(sql.type(z.object({id: z.number()}))`
-        INSERT INTO meal_plans (user_id, name)
+        INSERT INTO meal_plans (created_by_user_id, name)
           VALUES (${User.UserId}, ${this.Name})
         RETURNING id;
       `);
@@ -116,7 +75,7 @@ export class MealPlan {
     } else {
       let Results = await pool.one(sql.type(z.object({id: z.number()}))`
         UPDATE meal_plans
-          SET user_id = ${User.UserId},
+          SET created_by_user_id = ${User.UserId},
           name = ${this.Name}
         WHERE id = ${this.MealPlanId}
         RETURNING id;
@@ -126,64 +85,11 @@ export class MealPlan {
   }
 
 
-  // * * * * * * * * * * * * * * * * * * * * * *
-  // * * *              Set                * * *
-  // * * * * * * * * * * * * * * * * * * * * * *
-
-  // public async ReplaceMealRandom(Day: DaysOfWeek, Time: MealTime): Promise<MealPlan> {
-  //   const pool = await Database.getPool();
-
-  //   const newMeal = await Meal.GetRandomMeal(this);
-
-  //   const query = sql.type(z.object({id: z.number()}))`
-  //     UPDATE meal_plan_meals
-  //       SET meal_id = ${newMeal.MealId},
-  //         is_full_meal = ${newMeal instanceof FullMeal}
-  //     WHERE meal_plan_id = ${this.MealPlanId}
-  //     AND day_for = ${Day}
-  //     AND time_for = ${Time}
-  //   `;
-
-  //   try {
-  //     await pool.query(query);
-  //   } catch (error) {
-  //     console.log('Error while inserting into meal_plan_meals', error);
-  //     return new MealPlan();
-  //   }
-
-  //   return this;
-  // }
-
-
-  public async ReplaceMealCustom(Day: DaysOfWeek, Time: MealTime, MealId: number, IsFullMeal: boolean): Promise<MealPlan> {
-    const pool = await Database.getPool();
-
-    const query = sql.type(z.object({id: z.number()}))`
-      UPDATE meal_plan_meals
-        SET meal_id = ${MealId},
-          is_full_meal = ${IsFullMeal}
-      WHERE meal_plan_id = ${this.MealPlanId}
-      AND day_for = ${Day}
-      AND time_for = ${Time}
-    `;
-
-    try {
-      await pool.query(query);
-    } catch (error) {
-      console.log('Error while inserting into meal_plan_meals', error);
-      return new MealPlan();
-    }
-
-    return new MealPlan();
-  }
-
-
-
   public static Serialize(MealPlan: MealPlan): MealPlanResultType {
     return {
       id: MealPlan.MealPlanId,
       name: MealPlan.Name,
-      user_id: MealPlan.UserId,
+      created_by_user_id: MealPlan.CreatedByUserId,
     }
   }
 
@@ -191,7 +97,7 @@ export class MealPlan {
     return Object.assign(new MealPlan(), {
       MealPlanId: MealPlanData.id,
       Name: MealPlanData.name,
-      UserId: MealPlanData.user_id,
+      UserId: MealPlanData.created_by_user_id,
     });
   }
 
@@ -214,6 +120,10 @@ export class MealPlan {
 
 export class MealPlanSearchCriteria {
   MealPLanIdList: number[] = [];
-  UserIdList: number[] = [];
+  CreatedByUserIdList: number[] = [];
   Name: string = "";
+
+  constructor(init?: Partial<MealPlanSearchCriteria>) {
+    Object.assign(this, init);
+  }
 }

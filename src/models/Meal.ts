@@ -143,4 +143,8 @@ export class Meal {
 export class MealSearchCriteria {
   MealPlanIdList: number[] = [];
   MealIdList: number[] = [];
+
+  constructor(init?: Partial<MealSearchCriteria>) {
+    Object.assign(this, init);
+  }
 }

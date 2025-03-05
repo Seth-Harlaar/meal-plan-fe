@@ -8,9 +8,9 @@ export default async function Navbar(){
   return <nav>
     <div className="left">
       <a href="/"><span>Meal Planner</span></a>
-      <span className='link'>Plans</span>
-      <span className='link'>Meals</span>
-      <span className='link'>Foods</span>
+      <a href="/mealplan/list"><span className='link'>Plans</span></a>
+      <a href="/recipes"><span className='link'>Recipes</span></a>
+      <a href="/foods"><span className='link'>Foods</span></a>
     </div>
     <div className="flex-spacer"></div>
     <div className="right">

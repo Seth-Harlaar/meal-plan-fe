@@ -18,6 +18,7 @@ export class User {
   LastName: string;
   Email: string;
   GoogleId: string;
+  CurrentMealplanID: number = 0;
 
   public constructor(firstName: string, lastName: string, email: string, GoogleId: string){
     this.FirstName = firstName;
@@ -33,8 +34,8 @@ export class User {
     if(this.UserId == 0){
       let result = await pool.one(
         sql.type(z.object({id: z.number()}))`
-          INSERT INTO users (first_name, last_name, email, google_id)
-            VALUES (${this.FirstName}, ${this.LastName}, ${this.Email}, ${this.GoogleId})
+          INSERT INTO users (first_name, last_name, email, google_id, current_mealplan_id)
+            VALUES (${this.FirstName}, ${this.LastName}, ${this.Email}, ${this.GoogleId}, ${this.CurrentMealplanID})
           RETURNING id;
         `);
       this.UserId = result.id;
@@ -46,6 +47,7 @@ export class User {
           SET first_name = ${this.FirstName},
               last_name = ${this.LastName},
               email = ${this.Email},
+              current_mealplan_id = ${this.CurrentMealplanID},
           WHERE id = ${this.UserId}
           RETURNING id;
         `);
@@ -64,6 +66,7 @@ export class User {
 
       let NewUser = new User(user.first_name, user.last_name, user.email, user.google_id);
       NewUser.UserId = user.id;
+      NewUser.CurrentMealplanID = user.current_mealplan_id;
   
       return NewUser;
 

@@ -1,11 +1,22 @@
 "use server";
 import { GetCurrentUser } from "@/auth/auth";
 import { FoodResultType, MealResultType, RecipeResultType, Zods } from "@/db/db";
-import { Food } from "@/models/Food";
 import { Meal, MealSearchCriteria } from "@/models/Meal";
 import { MealPlan } from "@/models/MealPlan";
 import Recipe, { RecipeSearchCriteria } from "@/models/Recipe";
-import { z } from "zod";
+
+
+export async function saveRecipe(newRecipeData: RecipeResultType){
+  const user = await GetCurrentUser();
+  if(!user){
+    console.log('User not logged in.');
+    return null;
+  }
+
+  const NewRecipe = Recipe.Deserialize(newRecipeData);
+  await NewRecipe.SaveChanges();
+  return NewRecipe.Serialize();
+}
 
 export async function saveMealPlan(newMealData: MealResultType[]) {
   const user = await GetCurrentUser();

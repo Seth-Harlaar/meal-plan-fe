@@ -28,7 +28,7 @@ export class Zods {
   static mealPlan = z.object({
     id: z.number(),
     name: z.string(),
-    user_id: z.number(),
+    created_by_user_id: z.number(),
   });
 
   // meals
@@ -55,6 +55,7 @@ export class Zods {
     last_name: z.string(),
     email: z.string(),
     google_id: z.string(),
+    current_mealplan_id: z.number(),
   })
 }
 

@@ -26,7 +26,7 @@ export default async function Page({params}: {params: Promise<{ MealPlanId: numb
     MealPLanIdList: [MealPlanId],
   })))[0];
 
-  if(mealPlan == null || mealPlan.UserId != user.UserId){
+  if(mealPlan == null || mealPlan.CreatedByUserId != user.UserId){
     return <>Invalid meal plan ID.</>
   }
 

@@ -18,8 +18,8 @@ export default async function Home() {
     );
   }
 
-  const mealPlans = await MealPlan.GetMealPlans(Object.assign(new MealPlanSearchCriteria(), {
-    UserIdList: [user.UserId]
+  const mealPlans = await MealPlan.GetMealPlans(new MealPlanSearchCriteria({
+    CreatedByUserIdList: [user.UserId]
   }));
   
   let mealList: Meal[] = [];
@@ -37,7 +37,6 @@ export default async function Home() {
     }));
   }
 
-  const daysOfWeek: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
   if(user){
     return (
