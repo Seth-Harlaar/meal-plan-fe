@@ -2,12 +2,15 @@ import { useContext } from "react"
 import { ModalContext } from "../providers/ModalProvider"
 
 import './styles/Modal.css';
+import { XButton } from "./Buttons";
 
 export default function Modal({children}: {children: React.ReactNode}){
   const modal = useContext(ModalContext);
 
   return <div id="modal-container">
-    <div id="modal-exit" onClick={() => {modal.closeModal()}}></div>
+    <div id="modal-exit" onClick={() => {modal.closeModal()}}>
+      <XButton/>
+    </div>
     <div id="modal">
       <div>
         {children}

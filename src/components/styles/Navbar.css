@@ -1,5 +1,6 @@
 
-nav {
+nav > div {
+  width: 100%;
   height: 60px;
   padding: 0 30px;
   background: #35393d;
@@ -8,7 +9,7 @@ nav {
   gap: 16px;
 }
 
-nav > h1 {
+nav h1 {
   padding: 0 16px;
   font-size: 14pt;
   line-height: 60px;
@@ -22,4 +23,43 @@ nav a {
 nav .left {
   display: flex;
   gap: 16px;
+}
+
+
+/* mobile only nav slider */
+
+.nav-slider {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  transition: .3s;
+}
+
+.nav-slider.closed {
+  width: 0;
+}
+
+.nav-slider .exit {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.nav-menu {
+  height: 100%;
+  width: 50%;
+  padding: 0 16px;
+  background: var(--bg-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-menu h1 {
+  padding: 0;
 }

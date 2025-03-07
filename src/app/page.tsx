@@ -23,10 +23,11 @@ export default async function Home() {
   }));
   
   let mealList: Meal[] = [];
+  const primaryMealPlan = mealPlans.find(m => m.MealPlanId == user.CurrentMealplanID) || mealPlans[0];
 
-  if(mealPlans[0]){
+  if(primaryMealPlan){
     mealList = await Meal.GetMeals(Object.assign(new MealSearchCriteria(), {
-      MealPlanIdList: [mealPlans[0].MealPlanId],
+      MealPlanIdList: [primaryMealPlan.MealPlanId],
     }));
   }
 
@@ -37,55 +38,42 @@ export default async function Home() {
     }));
   }
 
+  return (
+    <>
+      <div className="page-splitter">
+        {/* Left side */}
+        <div id="meal-plan-days" className="left">
+          <h3>Your current selected meal plan:</h3>
+          <h2>{primaryMealPlan.Name}</h2>
+          {mealPlans.length > 0 
+            ? <MealPlanListView mealDataList={mealList.map(m => Meal.Serialize(m))} recipeDataList={recipes.map(r => Recipe.Serialize(r))}/>
+            : <div className="no-plan-message">
+                  <h2>You do not have any meal plans.</h2>
+                  <h2>Try creating one <a href="/mealplan/new" className="button">here</a></h2>
+              </div>
+          }
+        </div>
 
-  if(user){
-    return (
-      <>
-        <div className="page-splitter">
-          {/* Left side */}
-          <div id="meal-plan-days" className="left">
-            <select id="meal-plan-selector">
-              {/* {mealPlans.map((mealPlan, index) => {
-                return <option key={index} value={index}>
-                  {mealPlan.Name}
-                </option>
-              })} */}
-            </select>
-            {mealPlans.length > 0 
-              ? <MealPlanListView mealDataList={mealList.map(m => Meal.Serialize(m))} recipeDataList={recipes.map(r => Recipe.Serialize(r))}/>
-              : <div className="no-plan-message">
-                    <h2>You do not have any meal plans.</h2>
-                    <h2>Try creating one <a href="/mealplan/new" className="button">here</a></h2>
+        {/* Right side */}
+        <div id="meal-plans" className="right">
+          <h1>Meal Plans</h1>
+          <div className="meal-plan-list">
+            {mealPlans.map((mealPlan, index) => {
+              return <a key={index} href={`/mealplan/${mealPlan.MealPlanId}`}>
+                <div className="meal-plan">
+                  <h2>{mealPlan.Name}</h2>
+                  <h3>asdf</h3>
                 </div>
-            }
-          </div>
-
-          {/* Right side */}
-          <div id="meal-plans" className="right">
-            <h1>Meal Plans</h1>
-            <div className="meal-plan-list">
-              {mealPlans.map((mealPlan, index) => {
-                return <a key={index} href={`/mealplan/${mealPlan.MealPlanId}`}>
-                  <div className="meal-plan">
-                    <h2>{mealPlan.Name}</h2>
-                    <h3>asdf</h3>
-                  </div>
-                  {index != (mealPlans.length - 1) && <hr/>}
-                </a>
-              })}
-              <a id="new-meal-plan-button" href="/mealplan/new">
-                <div>New Meal Plan</div>
+                {index != (mealPlans.length - 1) && <hr/>}
               </a>
-            </div>
+            })}
+            <a id="new-meal-plan-button" href="/mealplan/new">
+              <div>New Meal Plan</div>
+            </a>
           </div>
         </div>
-      </>
-    );
-  } else {
-
-    return (
-      <>not logged in</>
-    );
-  }
+      </div>
+    </>
+  );
 }
 

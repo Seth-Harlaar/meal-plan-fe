@@ -97,7 +97,7 @@ export class MealPlan {
     return Object.assign(new MealPlan(), {
       MealPlanId: MealPlanData.id,
       Name: MealPlanData.name,
-      UserId: MealPlanData.created_by_user_id,
+      CreatedByUserId: MealPlanData.created_by_user_id,
     });
   }
 

@@ -65,6 +65,7 @@ body {
 .icon {
   height: 20pt;
   width: 20pt;
+  filter: invert(100);
 }
 
 

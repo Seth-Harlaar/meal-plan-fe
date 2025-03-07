@@ -1,11 +1,10 @@
-import { GetCurrentUser } from '@/auth/auth'
-import './styles/Navbar.css'
 
-export default async function Navbar(){
 
-  const user = await GetCurrentUser();
 
-  return <nav>
+
+export default function DesktopNav({userLoggedIn} : {userLoggedIn: boolean}){
+
+  return <div className="desktop-only">
     <div className="left">
       <a href="/"><span>Meal Planner</span></a>
       <a href="/mealplan/list"><span className='link'>Plans</span></a>
@@ -14,10 +13,10 @@ export default async function Navbar(){
     </div>
     <div className="flex-spacer"></div>
     <div className="right">
-      {user == null 
-        ? <a href='/api/login'><span className='button'>Login</span></a>
-        : <a href='/api/logout'><span className='button'>Logout</span></a>
+      {userLoggedIn 
+        ? <a href='/api/logout'><span className='button'>Logout</span></a>
+        : <a href='/api/login'><span className='button'>Login</span></a>
       }
     </div>
-  </nav>
+  </div>
 }

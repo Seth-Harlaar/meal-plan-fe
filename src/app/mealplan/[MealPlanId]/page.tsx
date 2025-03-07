@@ -22,7 +22,7 @@ export default async function Page({params}: {params: Promise<{ MealPlanId: numb
     return <>Invalid meal plan ID.</>
   }
 
-  const mealPlan = (await MealPlan.GetMealPlans(Object.assign(new MealPlanSearchCriteria, {
+  const mealPlan = (await MealPlan.GetMealPlans(new MealPlanSearchCriteria({
     MealPLanIdList: [MealPlanId],
   })))[0];
 
