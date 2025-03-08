@@ -1,4 +1,4 @@
-import { Database, Zods } from "@/db/db";
+import { Database, UserResultType, Zods } from "@/db/db";
 import { sql } from "slonik";
 import { z } from 'zod';
 
@@ -47,7 +47,7 @@ export class User {
           SET first_name = ${this.FirstName},
               last_name = ${this.LastName},
               email = ${this.Email},
-              current_mealplan_id = ${this.CurrentMealplanID},
+              current_mealplan_id = ${this.CurrentMealplanID}
           WHERE id = ${this.UserId}
           RETURNING id;
         `);

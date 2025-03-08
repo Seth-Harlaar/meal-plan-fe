@@ -34,7 +34,9 @@ export default function MobileNav({userLoggedIn} : {userLoggedIn: boolean}){
       </div>
 
       <div className="nav-menu">
-        <a href="/"><h1 className="title">Meal Planner</h1></a>
+        <div>
+          <a href="/"><h1 className="title">Meal Planner</h1></a>
+        </div>
         <a href="/mealplan/list"><span className='link'>Plans</span></a>
         <a href="/recipes"><span className='link'>Recipes</span></a>
         <a href="/foods"><span className='link'>Foods</span></a>

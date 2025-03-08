@@ -21,3 +21,29 @@ a:has(.button){
 .link {
   cursor: pointer;
 }
+
+
+
+
+/* cards */
+
+.cards-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+
+.card {
+  border-radius: 4px;
+  background-color: var(--bg-secondary);
+  border: 1px solid #eee;
+  padding: 12px;
+}
+
+
+.cards-medium .card {
+  flex: 1 1 350px;
+  max-width: 500px;
+  min-width: 300px;
+}
