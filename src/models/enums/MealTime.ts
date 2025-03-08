@@ -20,6 +20,6 @@ export function MealTimeAsString(time: MealTime){
     case 50:
       return "Other";
     default:
-      return "";
+      return "Dinner";
   }
 }

@@ -15,6 +15,9 @@ export default function MobileNav({userLoggedIn} : {userLoggedIn: boolean}){
       <div className="left">
         <span onClick={openMenu}><HamburgerMenuButton /></span>
       </div>
+      <div>
+        <a href="/"><span>Meal Planner</span></a>
+      </div>
       <div className="flex-spacer"></div>
       <div className="right">
         {userLoggedIn 

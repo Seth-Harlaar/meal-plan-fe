@@ -6,7 +6,7 @@ import Navbar from "../components/Navbar/Navbar";
 import "./styles/globals.css";
 import './styles/components.css';
 import './styles/variables.css';
-import './styles/dark-theme.css';
+import './styles/light-theme.css';
 import './styles/atomics.css';
 
 export const metadata: Metadata = {

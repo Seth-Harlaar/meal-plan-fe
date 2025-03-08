@@ -17,9 +17,6 @@ a:has(.button){
   background: rgba(0,0,0, 0.2);
 }
 
-
-
-
 /* links */
 .link {
   cursor: pointer;

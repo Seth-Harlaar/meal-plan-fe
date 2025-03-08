@@ -8,7 +8,7 @@ import MealPlanEditView from "./mealplan/MealPlanEditView";
 import Recipe, { RecipeSearchCriteria } from "@/models/Recipe";
 
 import './page.css'
-import MealPlanListView from "@/components/MealPlanListView";
+import MealPlanListView from "@/app/mealplan/MealPlanListView";
 
 export default async function Home() {
   const user = await GetCurrentUser();

@@ -27,26 +27,20 @@ export default function MealPlanListItem(
     </div>
   }
   return <div className="meal">
-    <img className="meal-preview" src='https://www.onceuponachef.com/images/2024/01/Grilled-Cheese-6-1200x1800.jpg'/>
+    <img className="meal-preview" src='https://potatorolls.com/wp-content/uploads/2020/10/Big-Tex_med.jpg'/>
     <div className="desc">
       <h2 className="title">{recipeData?.name}</h2>
       <h3>{mealData == null ? "" : MealTimeAsString(mealData.time_for)}</h3>
     </div>
     <div className="flex-spacer"></div>
     {editFunction && 
-      <div onClick={editFunction}>
-        <EditButton />
-      </div>
+      <EditButton onClick={editFunction}/>
     }
     {addMealFunction &&
-      <div onClick={addMealFunction}>
-        <PlusButton />
-      </div>
+      <PlusButton onClick={addMealFunction}/>
     }
     {rerollFunction && 
-      <div onClick={rerollFunction}>
-        <RefreshButton />
-      </div>
+      <RefreshButton onClick={rerollFunction}/>
     }
   </div>
 }

@@ -1,34 +1,38 @@
 'use client'
 
-import { ModalContext } from "@/providers/ModalProvider";
-import { useContext } from "react";
-
-export function EditButton(){
+function IconContainer({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) {
   return (
-    <img className="icon edit-button" src="/icons/pencil.svg"/>
-  )
+    <span className="icon-container" onClick={onClick}>
+      {children}
+    </span>
+  );
 }
 
-export function RefreshButton(){
+function IconButton({ src, className, onClick }: { src: string; className: string; onClick?: () => void }) {
   return (
-    <img className="icon refresh-button" src="/icons/refresh.svg"/>
-  )
+    <IconContainer onClick={onClick}>
+      <img className={`icon ${className}`} src={src} />
+    </IconContainer>
+  );
 }
 
-export function HamburgerMenuButton(){
-  return (
-    <img className="icon refresh-button" src="/icons/hamburger.svg"/>
-  )
+// Define buttons using only image src and className
+export function EditButton(props: { onClick?: () => void }) {
+  return <IconButton src="/icons/pencil.svg" className="edit-button" {...props} />;
 }
 
-export function PlusButton(){
-  return (
-    <img className="icon plus-button" src="/icons/plus.svg"/>
-  )
+export function RefreshButton(props: { onClick?: () => void }) {
+  return <IconButton src="/icons/refresh.svg" className="refresh-button" {...props} />;
 }
 
-export function XButton(){
-  return (
-    <img className="icon x-button" src="/icons/x.svg"/>
-  )
+export function HamburgerMenuButton(props: { onClick?: () => void }) {
+  return <IconButton src="/icons/hamburger.svg" className="ham-menu-button" {...props} />;
+}
+
+export function PlusButton(props: { onClick?: () => void }) {
+  return <IconButton src="/icons/plus.svg" className="plus-button" {...props} />;
+}
+
+export function XButton(props: { onClick?: () => void }) {
+  return <IconButton src="/icons/x.svg" className="x-button" {...props} />;
 }

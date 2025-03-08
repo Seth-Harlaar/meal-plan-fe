@@ -22,17 +22,12 @@
 }
 
 html {
-  color-scheme: dark;
   font-family: "Lato", serif;
   font-size: 16pt;
   height: 100%;
   width: 100%;
-  background: #2d3236;
-  color: white;
-}
-
-h1 {
-  font-family: none;
+  background: var(--bg-primary);
+  color: var(--color-text-primary);
 }
 
 h1, h2, h3, h4 {
@@ -62,13 +57,16 @@ body {
 }
 
 /* icons */
-.icon {
+span.icon-container {
+  display: inline-block;
   height: 20pt;
   width: 20pt;
-  filter: invert(100);
 }
 
-
+.icon {
+  height: 100%;
+  width: 100%;
+}
 
 
 /* layouts */

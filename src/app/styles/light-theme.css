@@ -1,0 +1,21 @@
+
+:root {
+  --color-highlight: #f5b951;
+  --color-highlight-60: rgba(245, 185, 81, 0.6);
+
+  --bg-primary: white;
+  --bg-secondary: white;
+  --bg-navbar: #f6f8fa;
+
+  --bg-secondary-hover: white;
+
+
+  --highlight-border-color: var(--color-highlight);
+  --highlight-border-color-60: var(--color-highlight-60);
+
+
+  /* text colors */
+  --color-text-primary: black;
+  --color-text-primary-60: rgba(0,0,0, 0.6);
+  --color-text-primary-40: rgba(0,0,0, 0.4);
+}
