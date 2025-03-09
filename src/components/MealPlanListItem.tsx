@@ -1,6 +1,6 @@
 'use client'
 import { MealTime, MealTimeAsString } from "@/models/enums/MealTime";
-import { EditButton, PlusButton, RefreshButton } from "./Buttons";
+import { EditIcon, IconButton, PlusIcon, RefreshIcon } from "./Icons";
 import './styles/MealListing.css';
 import { FoodResultType, MealResultType, RecipeResultType } from "@/db/db";
 
@@ -22,7 +22,7 @@ export default function MealPlanListItem(
       </div>
       <div className="flex-spacer"></div>
       <div>
-        <RefreshButton />
+        <RefreshIcon />
       </div>
     </div>
   }
@@ -34,13 +34,19 @@ export default function MealPlanListItem(
     </div>
     <div className="flex-spacer"></div>
     {editFunction && 
-      <EditButton onClick={editFunction}/>
+      <IconButton onClick={editFunction} >
+        <EditIcon />
+      </IconButton>
     }
     {addMealFunction &&
-      <PlusButton onClick={addMealFunction}/>
+      <IconButton onClick={addMealFunction}>
+        <PlusIcon />
+      </IconButton>
     }
     {rerollFunction && 
-      <RefreshButton onClick={rerollFunction}/>
+      <IconButton onClick={rerollFunction}>
+        <RefreshIcon/>
+      </IconButton>
     }
   </div>
 }

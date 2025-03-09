@@ -44,7 +44,7 @@ export default async function Page({params}: {params: Promise<{ MealPlanId: numb
   return (
     <>
       <PageTitle titleText="Meal Plan"/>
-      <PageTitle titleText={MealPlan.genericMealPlanName()}/>
+      <PageTitle titleText={mealPlan.Name}/>
       <MealPlanEditView mealDataList={mealData} recipeDataList={recipes.map(r => r.Serialize())} />
     </>
   );

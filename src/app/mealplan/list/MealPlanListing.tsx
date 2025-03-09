@@ -1,15 +1,16 @@
 'use client'
-import { MealPlanResultType, UserResultType } from "@/db/db";
+import { MealPlanResultType, MealResultType, RecipeResultType, UserResultType } from "@/db/db";
 import { SetCurrenMealPlan } from "./action";
-import { StarIcon } from "@/components/Icons";
 import { useState } from "react";
 
-import './MealPlanListing.css';
-import { MealTime } from "@/models/enums/MealTime";
+import './page.css';
+import { ArrowIcon, IconButton, LinkWrapper, StarIcon, XIcon } from "@/components/Icons";
 
 export default function MealPlanListing(
-  {mealPlanDataList, primaryMealPlanId} :
-  {mealPlanDataList: MealPlanResultType[], primaryMealPlanId: number}
+  { mealPlanDataList, mealDataList, recipeDataList, primaryMealPlanId } :
+  { mealPlanDataList: MealPlanResultType[], mealDataList: MealResultType[],
+    recipeDataList: RecipeResultType[], primaryMealPlanId: number,
+  }
 ){
   const [primaryMealPlanIDState, setPrimaryMealPlanIDState] = useState<number>(primaryMealPlanId);
 
@@ -22,13 +23,30 @@ export default function MealPlanListing(
     <>
       {mealPlanDataList.map((mealplan, index) => {
         const isPrimary = mealplan.id == primaryMealPlanIDState;
+        const mealPlanMeals = mealDataList.filter(md => md.meal_plan_id == mealplan.id);
+        const recipes = recipeDataList.filter(rd => mealPlanMeals.map(md => md.recipe_id).includes(rd.id));
+        const recipeString = `${recipes.map(r => r.name).join(', ')}`;
 
-        return <div className="card mealplan-card" key={index} onClick={() => handleMealCardClick(mealplan.id)}>
-            <h1>{mealplan.name}</h1>
-            {isPrimary && 
-              <StarIcon />
-            }
-            <h3>Meals: </h3>
+        return <div className="card mealplan-card" key={index}>
+            <div className="card-title">
+              <h1>{mealplan.name}</h1>
+              {isPrimary && 
+                <StarIcon />
+              }
+            </div>
+            <h3 className="card-subtitle">Meals: {recipeString}</h3>
+            <hr />
+            <div className="card-buttons">
+              <IconButton onClick={() => {}}>
+                <XIcon />
+              </IconButton>
+              <IconButton onClick={() => handleMealCardClick(mealplan.id)}>
+                <StarIcon />
+              </IconButton>
+              <LinkWrapper href={`/mealplan/${mealplan.id}`}>
+                <ArrowIcon />
+              </LinkWrapper>
+            </div>
           </div>
       })}
     </>

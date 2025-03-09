@@ -7,6 +7,7 @@
   --bg-secondary: white;
   --bg-navbar: #f6f8fa;
 
+  --bg-primary-hover: #f0f0f0;
   --bg-secondary-hover: white;
 
 
@@ -18,4 +19,7 @@
   --color-text-primary: black;
   --color-text-primary-60: rgba(0,0,0, 0.6);
   --color-text-primary-40: rgba(0,0,0, 0.4);
+
+  /* icon colors */
+  --icon-filter-highlight: invert(74%) sepia(31%) saturate(787%) hue-rotate(355deg) brightness(99%) contrast(94%);
 }

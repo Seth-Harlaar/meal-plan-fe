@@ -4,8 +4,11 @@
   cursor: pointer;
 }
 
-
+.mealplan-card .card-title .icon-star {
+  filter: var(--icon-filter-highlight);
+}
 
 .mealplan-card h3 {
   color: var(--color-text-primary-60);
 }
+

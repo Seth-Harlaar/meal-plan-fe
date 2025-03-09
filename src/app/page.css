@@ -44,12 +44,17 @@
 }
 
 .meal-plan-list {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--color-text-primary);
   padding-top: 12px;
 }
 
-.meal-plan-list > hr {
-  border-color: rgba(255, 255, 255, 0.6);
+.meal-plan-list a {
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.meal-plan-list hr {
+  border-color: var(--color-text-primary);
   border-style: solid;
   margin-top: 8px;
   margin-bottom: 8px;
@@ -62,7 +67,7 @@
 }
 
 .meal-plan:hover {
-  background: #35393d;
+  background: var(--bg-primary-hover);
 }
 
 .meal-plan > h2 {
@@ -71,13 +76,14 @@
 
 .meal-plan > h3 {
   font-size: 12pt;
-  color: rgba(255, 255,255, 0.6);
+  color: var(--color-text-primary-60);
 }
 
 #new-meal-plan-button {
   height: 61px;
   padding: 8px;
-  border: 1px dashed rgba(255, 255, 255, 0.6);
+  margin-top: 8px;
+  border: 2px dashed var(--color-text-primary-40);
   border-radius: 5px;
   cursor: pointer;
   display: flex;
@@ -87,6 +93,15 @@
   color: inherit;
 }
 
+#new-meal-plan-button div {
+  color: var(--color-text-primary-40);
+}
+
 #new-meal-plan-button:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-primary-hover);
+  color: var(--color-text-primary-60);
+}
+
+#new-meal-plan-button:hover div {
+  color: var(--color-text-primary-60);
 }

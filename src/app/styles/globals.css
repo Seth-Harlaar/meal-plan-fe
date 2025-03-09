@@ -12,6 +12,9 @@
   --brk-xl: 1400px;
 
   --page-title-height: 30px;
+
+  --icon-height: 20pt;
+  --icon-width: 20pt;
 }
 
 
@@ -39,11 +42,11 @@ h1 {
 }
 
 h2 {
-  font-size: 19pt;
+  font-size: 18pt;
 }
 
 h3 {
-  font-size: 17pt;
+  font-size: 15pt;
 }
 
 body {
@@ -71,8 +74,8 @@ body {
 /* icons */
 span.icon-container {
   display: inline-block;
-  height: 20pt;
-  width: 20pt;
+  height: var(--icon-height);
+  width: var(--icon-width);
 }
 
 .icon {

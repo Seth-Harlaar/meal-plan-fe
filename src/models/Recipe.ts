@@ -144,13 +144,3 @@ export class RecipeSearchCriteria {
     Object.assign(this, init);
   }
 }
-
-
-
-function getRandomInt(max: number) {
-  return Math.floor(Math.random() * max);
-}
-
-
-
-

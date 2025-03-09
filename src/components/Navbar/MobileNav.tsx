@@ -1,6 +1,6 @@
 'use client'
 import { useState } from "react"
-import { HamburgerMenuButton, XButton } from "../Buttons";
+import { HamburgerMenuIcon, XIcon } from "../Icons";
 
 export default function MobileNav({userLoggedIn} : {userLoggedIn: boolean}){
 
@@ -13,7 +13,7 @@ export default function MobileNav({userLoggedIn} : {userLoggedIn: boolean}){
   {/* the bar at the top */}
     <div className="mobile-only">
       <div className="left">
-        <span onClick={openMenu}><HamburgerMenuButton /></span>
+        <span onClick={openMenu}><HamburgerMenuIcon /></span>
       </div>
       <div>
         <a href="/"><span>Meal Planner</span></a>
@@ -30,7 +30,7 @@ export default function MobileNav({userLoggedIn} : {userLoggedIn: boolean}){
     {/* the openning/closing menu */}
     <div className={"nav-slider " + (isOpen ? "" : "closed")}>
       <div className="exit" onClick={closeMenu}>
-        <XButton />
+        <XIcon />
       </div>
 
       <div className="nav-menu">

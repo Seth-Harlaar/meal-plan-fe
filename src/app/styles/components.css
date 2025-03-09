@@ -17,6 +17,11 @@ a:has(.button){
   background: rgba(0,0,0, 0.2);
 }
 
+.icon-button-wrapper {
+  height: var(--icon-height);
+  width: var(--icon-width);
+}
+
 /* links */
 .link {
   cursor: pointer;
@@ -39,11 +44,35 @@ a:has(.button){
   background-color: var(--bg-secondary);
   border: 1px solid #eee;
   padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
+.card hr {
+  border-color: var(--text-color-primary-40);
+}
 
 .cards-medium .card {
   flex: 1 1 350px;
   max-width: 500px;
   min-width: 300px;
+}
+
+.card .card-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card .card-subtitle.ellipsis {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.card .card-buttons {
+  display: flex;
+  justify-content: end;
+  gap: 8px;
 }
