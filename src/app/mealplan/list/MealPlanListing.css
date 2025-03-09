@@ -3,3 +3,9 @@
 .mealplan-card:hover {
   cursor: pointer;
 }
+
+
+
+.mealplan-card h3 {
+  color: var(--color-text-primary-60);
+}
