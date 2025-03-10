@@ -1,7 +1,6 @@
 'use client'
 import { MealTime, MealTimeAsString } from "@/models/enums/MealTime";
-import { EditIcon, IconButton, PlusIcon, RefreshIcon } from "./Icons";
-import './styles/MealListing.css';
+import { EditIcon, IconButton, PlusIcon, RefreshIcon } from "../Icons";
 import { FoodResultType, MealResultType, RecipeResultType } from "@/db/db";
 
 export default function MealPlanListItem(

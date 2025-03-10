@@ -1,7 +1,7 @@
 'use server'
 
 import PageTitle from "@/components/PageTitle";
-import MealPlanEditView from "../MealPlanEditView";
+import MealPlanEditView from "../../../components/MealPlanView/MealPlanEditView";
 import LogInMessage from "@/components/LogInMessage";
 import { GetCurrentUser } from "@/auth/auth";
 import { MealPlan, MealPlanSearchCriteria } from "@/models/MealPlan";
@@ -42,10 +42,10 @@ export default async function Page({params}: {params: Promise<{ MealPlanId: numb
   }
 
   return (
-    <>
+    <div id="meal-plan-days">
       <PageTitle titleText="Meal Plan"/>
       <PageTitle titleText={mealPlan.Name}/>
       <MealPlanEditView mealDataList={mealData} recipeDataList={recipes.map(r => r.Serialize())} />
-    </>
+    </div>
   );
 }

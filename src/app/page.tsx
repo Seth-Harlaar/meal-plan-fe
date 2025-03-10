@@ -4,11 +4,11 @@ import { MealPlan, MealPlanSearchCriteria } from "../models/MealPlan";
 import { GetCurrentUser } from "@/auth/auth";
 import LogInMessage from "@/components/LogInMessage";
 import { Meal, MealSearchCriteria } from "@/models/Meal";
-import MealPlanEditView from "./mealplan/MealPlanEditView";
+import MealPlanEditView from "../components/MealPlanView/MealPlanEditView";
 import Recipe, { RecipeSearchCriteria } from "@/models/Recipe";
 
 import './page.css'
-import MealPlanListView from "@/app/mealplan/MealPlanListView";
+import MealPlanListView from "@/components/MealPlanView/MealPlanListView";
 
 export default async function Home() {
   const user = await GetCurrentUser();

@@ -6,6 +6,7 @@ import { DaysOfWeek } from "./enums/DaysOfTheWeek";
 import { MealTime } from "./enums/MealTime";
 import { GetCurrentUser } from "@/auth/auth";
 import { z } from "zod";
+import { GetMeal } from "@/app/mealplan/new/action";
 
 // The basis of the meal
 export class Meal {
@@ -15,6 +16,10 @@ export class Meal {
   TimeFor: MealTime = MealTime.DINNER;
   RecipeId: number = 0;
 
+  
+  // * * * * * * * * * * * * * * * * * * * * * *
+  // * * *          Searching              * * * 
+  // * * * * * * * * * * * * * * * * * * * * * *
   static async GetMeals(InputCriteria: MealSearchCriteria): Promise<Meal[]>{
     const DefaultCriteria = new MealSearchCriteria();
     const Criteria = {...DefaultCriteria, ...InputCriteria };
@@ -59,7 +64,10 @@ export class Meal {
   }
 
 
-  // save meal plan
+  // * * * * * * * * * * * * * * * * * * * * * *
+  // * * *            Saving               * * * 
+  // * * * * * * * * * * * * * * * * * * * * * *
+
   public async SaveChanges(): Promise<void> {
     const pool = await Database.getPool();
     const User = await GetCurrentUser();
@@ -95,27 +103,71 @@ export class Meal {
     }
   }
 
+
   // * * * * * * * * * * * * * * * * * * * * * *
-  // * * *          Generating             * * *
+  // * * *           Deleting              * * * 
   // * * * * * * * * * * * * * * * * * * * * * *
 
-  
+  public static async Delete(MealIDList: number[]): Promise<boolean> {
+    const pool = await Database.getPool();
+    const User = await GetCurrentUser();
+    
+    // save meal plan to db
+    if(User == null){
+      console.log('User could not be authenticated.');
+      return false;
+    }
+
+    if(MealIDList.length == 0){
+      console.log('Cannot delete no meals');
+      return false;
+    }
+
+    let query = sql.typeAlias('void')`
+      DELETE FROM meals
+      WHERE 1=1
+
+      ${ // meal plan ids
+        (MealIDList.length > 0) 
+        ? sql.fragment`AND id IN (${sql.join(MealIDList, sql.fragment`, `)})`
+        : sql.fragment``}
+    `;
+
+    try {
+      await pool.query(query);
+      return true;
+    } catch (error) {
+      console.log('Error while deleting meals', error);
+      return false;
+    }
+  }
+
+  public static async DeleteMealsForPlans(MealPlanIDList: number[]): Promise<void> {
+    const User = await GetCurrentUser();
+    
+    // save meal plan to db
+    if(User == null){
+      console.log('User could not be authenticated.');
+      return;
+    }
+
+    if(MealPlanIDList.length == 0){
+      console.log('Cannot delete meals for no meals plans.');
+    }
+
+    console.log('Deleting all meals for mealplan ' + MealPlanIDList.join(', '));
+
+    const meals = await Meal.GetMeals( new MealSearchCriteria({
+      MealPlanIdList: MealPlanIDList,
+    }));
+
+    Meal.Delete(meals.map(m => m.MealId));
+  }
 
 
   // * * * * * * * * * * * * * * * * * * * * * *
   // * * *            Utility              * * * 
   // * * * * * * * * * * * * * * * * * * * * * *
-  private static GenerateFoodSerial(FoodList: Food[]): string {
-    // mains - sides - veggies - other
-    // grouped in order according to id (ascending)
-    var idList: number[] = [];
-    idList.push(...FoodList.filter(x => x.type == 10).map(x => x.id).sort()); 
-    idList.push(...FoodList.filter(x => x.type == 20).map(x => x.id).sort()); 
-    idList.push(...FoodList.filter(x => x.type == 30).map(x => x.id).sort()); 
-    idList.push(...FoodList.filter(x => x.type != 10 && x.type != 20 && x.type != 30).map(x => x.id).sort()); 
-
-    return idList.join('-');
-  }
 
   public static Serialize(meal: Meal): MealResultType{
     return {

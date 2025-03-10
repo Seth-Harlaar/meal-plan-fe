@@ -1,5 +1,5 @@
 import { GetCurrentUser } from '@/auth/auth'
-import '../styles/Navbar.css'
+import './Navbar.css'
 import DesktopNav from './DesktopNav';
 import MobileNav from './MobileNav';
 

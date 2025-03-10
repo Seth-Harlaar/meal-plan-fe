@@ -5,7 +5,7 @@ import LogInMessage from "@/components/LogInMessage";
 import PageTitle from "@/components/PageTitle";
 import { MealPlan } from "@/models/MealPlan";
 import { Meal } from "@/models/Meal";
-import MealPlanEditView from "../MealPlanEditView";
+import MealPlanEditView from "../../../components/MealPlanView/MealPlanEditView";
 import { MealResultType, Zods } from "@/db/db";
 import Recipe, { RecipeSearchCriteria } from "@/models/Recipe";
 import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
@@ -39,10 +39,10 @@ export default async function Home() {
   }
 
   return (
-    <>
+    <div id="meal-plan-days">
       <PageTitle titleText="New Meal Plan"/>
       <PageTitle titleText={MealPlan.genericMealPlanName()}/>
       <MealPlanEditView mealDataList={newMeals} recipeDataList={recipes.map(r => Recipe.Serialize(r))} />
-    </>
+    </div>
   );
 }

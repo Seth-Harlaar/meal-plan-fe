@@ -83,6 +83,9 @@ span.icon-container {
   width: 100%;
 }
 
+.icon-x {
+  padding: 2px;
+}
 
 /* layouts */
 .max-width-1000 {

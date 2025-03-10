@@ -1,8 +1,10 @@
 'use client'
-import MealPlanListItem from "@/components/MealPlanListItem";
+import MealPlanListItem from "./MealPlanListItem";
 import { MealResultType, RecipeResultType } from "@/db/db";
 import { useEffect, useState, useTransition } from "react";
 import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
+
+import './MealListing.css';
 
 export default function MealPlanListView(
   {mealDataList, recipeDataList}: 

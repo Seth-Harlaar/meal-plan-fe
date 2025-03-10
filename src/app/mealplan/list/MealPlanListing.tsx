@@ -1,6 +1,6 @@
 'use client'
 import { MealPlanResultType, MealResultType, RecipeResultType, UserResultType } from "@/db/db";
-import { SetCurrenMealPlan } from "./action";
+import { DeleteMealPlan, SetCurrenMealPlan } from "./action";
 import { useState } from "react";
 
 import './page.css';
@@ -19,6 +19,13 @@ export default function MealPlanListing(
     setPrimaryMealPlanIDState(mealPlanId);
   }
 
+  function handleDeleteClick(mealPlanId: number){
+    const confirmed = window.confirm("Are you sure you want to delete this meal plan?");
+    if(confirmed){
+      DeleteMealPlan(mealPlanId);
+    }
+  }
+
   return (
     <>
       {mealPlanDataList.map((mealplan, index) => {
@@ -35,9 +42,10 @@ export default function MealPlanListing(
               }
             </div>
             <h3 className="card-subtitle">Meals: {recipeString}</h3>
+            <div className="flex-spacer" />
             <hr />
             <div className="card-buttons">
-              <IconButton onClick={() => {}}>
+              <IconButton onClick={() => {handleDeleteClick(mealplan.id)}}>
                 <XIcon />
               </IconButton>
               <IconButton onClick={() => handleMealCardClick(mealplan.id)}>

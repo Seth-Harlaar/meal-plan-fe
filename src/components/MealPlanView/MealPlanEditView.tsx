@@ -1,12 +1,14 @@
 'use client'
-import MealPlanListItem from "@/components/MealPlanListItem";
+import MealPlanListItem from ".//MealPlanListItem";
 import { MealResultType, RecipeResultType } from "@/db/db";
 import { useContext, useEffect, useState, useTransition } from "react";
-import { GetRandomRecipe, saveMealPlan } from "./new/action";
+import { GetRandomRecipe, saveMealPlan } from "../../app/mealplan/new/action";
 import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
 import { ModalContext } from "@/providers/ModalProvider";
-import EditMealPopup from "./EditMealPopup";
+import EditMealPopup from "../../app/mealplan/EditMealPopup";
 import { MealTime } from "@/models/enums/MealTime";
+
+import './MealListing.css';
 
 export default function MealPlanEditView(
   {mealDataList, recipeDataList}:
@@ -70,6 +72,7 @@ export default function MealPlanEditView(
         .map((day, dayIndex) => {
           const dayValue = DaysOfWeek[day as keyof typeof DaysOfWeek];
           return <div className="day" key={dayIndex}>
+            <hr/>
             <h1>{day}</h1>
             {meals.filter(m => m?.day_for == dayValue).map((mealData, index) => {
               let mealRecipe = recipes.find(rd => rd.id == mealData.recipe_id) ?? {id: 0, name: "", instructions: "", prep_time: 0};

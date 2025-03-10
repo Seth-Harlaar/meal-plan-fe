@@ -4,14 +4,16 @@ import { DaysOfWeek } from "./enums/DaysOfTheWeek";
 import { MealTime } from "./enums/MealTime";
 import { Database, MealResultType, MealPlanResultType, Zods } from "../db/db";
 import { GetCurrentUser } from "@/auth/auth";
+import { Meal } from "./Meal";
 
 export class MealPlan {
   MealPlanId: number = 0;
   CreatedByUserId: number = 0;
   Name: string = "";
 
+
   // * * * * * * * * * * * * * * * * * * * * * *
-  // * * *              Get                * * *
+  // * * *          Searching              * * * 
   // * * * * * * * * * * * * * * * * * * * * * *
 
   static async GetMealPlans(InputCriteria: Partial<MealPlanSearchCriteria>): Promise<MealPlan[]>{
@@ -53,7 +55,10 @@ export class MealPlan {
   }
 
 
-  // save meal plan
+  // * * * * * * * * * * * * * * * * * * * * * *
+  // * * *            Saving               * * * 
+  // * * * * * * * * * * * * * * * * * * * * * *
+
   public async SaveChanges(): Promise<void> {
     const pool = await Database.getPool();
     const User = await GetCurrentUser();
@@ -84,6 +89,55 @@ export class MealPlan {
     }
   }
 
+  
+  // * * * * * * * * * * * * * * * * * * * * * *
+  // * * *           Deleting              * * * 
+  // * * * * * * * * * * * * * * * * * * * * * *
+
+  public static async Delete(MealPlanIDList: number[]): Promise<boolean> {
+    const pool = await Database.getPool();
+    const User = await GetCurrentUser();
+    
+    // save meal plan to db
+    if(User == null){
+      console.log('User could not be authenticated.');
+      return false;
+    }
+
+    if(MealPlanIDList.length == 0){
+      console.log('Cannot delete no meal plans');
+      return false;
+    }
+
+    // first must delete all meals from these plans
+    if(!Meal.DeleteMealsForPlans(MealPlanIDList)){
+      console.log('error while deleting meal plans\'s meals');
+      return false;
+    }
+
+    let query = sql.typeAlias('void')`
+      DELETE FROM meal_plans
+      WHERE 1=1
+
+      ${ // meal plan ids
+        (MealPlanIDList.length > 0) 
+        ? sql.fragment`AND id IN (${sql.join(MealPlanIDList, sql.fragment`, `)})`
+        : sql.fragment``}
+    `;
+
+    try {
+      await pool.query(query);
+      return true;
+    } catch (error) {
+      console.log('Error while deleting meal plans', error);
+      return false;
+    }
+  }
+
+
+  // * * * * * * * * * * * * * * * * * * * * * *
+  // * * *            Utility              * * * 
+  // * * * * * * * * * * * * * * * * * * * * * *
 
   public static Serialize(MealPlan: MealPlan): MealPlanResultType {
     return {
