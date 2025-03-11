@@ -20,11 +20,13 @@ export async function SetCurrenMealPlan(MealPlanID: number){
 export async function DeleteMealPlan(MealPlanID: number){
   const user = await GetCurrentUser();
   if(user){
-    if(!MealPlan.Delete([MealPlanID])){
+    if(!(await MealPlan.Delete([MealPlanID]))){
       console.log('(Action) failed to delete meal plan with id' + MealPlanID);
+      return false;
     }
-
-    return;
+    return true;
   }
+
   console.log('Failed to delete  meal plan - User is not logged in');
+  return false;
 }

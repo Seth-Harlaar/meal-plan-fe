@@ -17,9 +17,6 @@ export default function MealPlanListView(
   const days = Object.keys(DaysOfWeek).filter((key) => isNaN(Number(key)));
   const shiftedDays = [...days.slice(today), ...days.slice(0, today)];
 
-  console.log(days);
-  console.log(shiftedDays);
-
   return (
     <>
       {shiftedDays

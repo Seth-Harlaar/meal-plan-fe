@@ -4,7 +4,6 @@ import { MealPlan, MealPlanSearchCriteria } from "../models/MealPlan";
 import { GetCurrentUser } from "@/auth/auth";
 import LogInMessage from "@/components/LogInMessage";
 import { Meal, MealSearchCriteria } from "@/models/Meal";
-import MealPlanEditView from "../components/MealPlanView/MealPlanEditView";
 import Recipe, { RecipeSearchCriteria } from "@/models/Recipe";
 
 import './page.css'
@@ -44,7 +43,7 @@ export default async function Home() {
         {/* Left side */}
         <div id="meal-plan-days" className="left">
           <h3>Your current selected meal plan:</h3>
-          <h2>{primaryMealPlan.Name}</h2>
+          <h2>{primaryMealPlan?.Name ?? ""}</h2>
           {mealPlans.length > 0 
             ? <MealPlanListView mealDataList={mealList.map(m => Meal.Serialize(m))} recipeDataList={recipes.map(r => Recipe.Serialize(r))}/>
             : <div className="no-plan-message">

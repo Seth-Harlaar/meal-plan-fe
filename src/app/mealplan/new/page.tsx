@@ -42,7 +42,7 @@ export default async function Home() {
     <div id="meal-plan-days">
       <PageTitle titleText="New Meal Plan"/>
       <PageTitle titleText={MealPlan.genericMealPlanName()}/>
-      <MealPlanEditView mealDataList={newMeals} recipeDataList={recipes.map(r => Recipe.Serialize(r))} />
+      <MealPlanEditView mealDataList={newMeals} recipeDataList={recipes.map(r => Recipe.Serialize(r))} isNew={true} />
     </div>
   );
 }

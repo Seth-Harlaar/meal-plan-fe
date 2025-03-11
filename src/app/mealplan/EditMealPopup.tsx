@@ -73,6 +73,6 @@ export default function EditMealPopup(
       <h3>Recipe instructions:</h3>
       <input type="text" onChange={(e) => setRecipeInstructions(e.target.value)}/>
     </div>
-    <button className="button" onClick={saveNewRecipeClick} />
-  </>
+    <div className="button" onClick={saveNewRecipeClick}>Save New Recipe</div>
+    </>
 }

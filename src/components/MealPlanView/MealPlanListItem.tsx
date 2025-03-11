@@ -10,8 +10,6 @@ export default function MealPlanListItem(
     addMealFunction: (() => void) | null
   }
 ){
-  const mealTimes: string[] = ["Breakfast", "Lunch", "Dinner", "Snack", "Other"];
-
   if(!recipeData || !mealData ){
     <div className="meal loading">
       <img className="meal-preview"/>
@@ -26,26 +24,30 @@ export default function MealPlanListItem(
     </div>
   }
   return <div className="meal">
-    <img className="meal-preview" src='https://potatorolls.com/wp-content/uploads/2020/10/Big-Tex_med.jpg'/>
-    <div className="desc">
-      <h2 className="title">{recipeData?.name}</h2>
-      <h3>{mealData == null ? "" : MealTimeAsString(mealData.time_for)}</h3>
+    <div className="meal-preview">
+      <img className="meal-image" src='https://potatorolls.com/wp-content/uploads/2020/10/Big-Tex_med.jpg'/>
+      <div className="desc">
+        <h2 className="title">{recipeData?.name}</h2>
+        <h3>{mealData == null ? "" : MealTimeAsString(mealData.time_for)}</h3>
+      </div>
     </div>
-    <div className="flex-spacer"></div>
-    {editFunction && 
-      <IconButton onClick={editFunction} >
-        <EditIcon />
-      </IconButton>
-    }
-    {addMealFunction &&
-      <IconButton onClick={addMealFunction}>
-        <PlusIcon />
-      </IconButton>
-    }
-    {rerollFunction && 
-      <IconButton onClick={rerollFunction}>
-        <RefreshIcon/>
-      </IconButton>
-    }
+    <hr />
+    <div className="buttons">
+      {editFunction && 
+        <IconButton onClick={editFunction} >
+          <EditIcon />
+        </IconButton>
+      }
+      {addMealFunction &&
+        <IconButton onClick={addMealFunction}>
+          <PlusIcon />
+        </IconButton>
+      }
+      {rerollFunction && 
+        <IconButton onClick={rerollFunction}>
+          <RefreshIcon/>
+        </IconButton>
+      }
+    </div>
   </div>
 }

@@ -1,7 +1,7 @@
 import { sql } from "slonik";
 import { Food, FoodType } from "./Food";
 import { MealPlan } from "./MealPlan";
-import { Database, MealResultType, Zods } from "../db/db";
+import { Database, MealResultType, sqlAliases, Zods } from "../db/db";
 import { DaysOfWeek } from "./enums/DaysOfTheWeek";
 import { MealTime } from "./enums/MealTime";
 import { GetCurrentUser } from "@/auth/auth";
@@ -123,7 +123,7 @@ export class Meal {
       return false;
     }
 
-    let query = sql.typeAlias('void')`
+    let query = sqlAliases.typeAlias('void')`
       DELETE FROM meals
       WHERE 1=1
 
@@ -142,17 +142,18 @@ export class Meal {
     }
   }
 
-  public static async DeleteMealsForPlans(MealPlanIDList: number[]): Promise<void> {
+  public static async DeleteMealsForPlans(MealPlanIDList: number[]): Promise<boolean> {
     const User = await GetCurrentUser();
     
     // save meal plan to db
     if(User == null){
       console.log('User could not be authenticated.');
-      return;
+      return false;
     }
 
     if(MealPlanIDList.length == 0){
       console.log('Cannot delete meals for no meals plans.');
+      return false;
     }
 
     console.log('Deleting all meals for mealplan ' + MealPlanIDList.join(', '));
@@ -161,7 +162,11 @@ export class Meal {
       MealPlanIdList: MealPlanIDList,
     }));
 
-    Meal.Delete(meals.map(m => m.MealId));
+    if(meals.length != 0){
+      return Meal.Delete(meals.map(m => m.MealId))
+    }
+
+    return true;
   }
 
 

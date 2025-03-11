@@ -1,26 +1,52 @@
 
 /* buttons */
-
 a:has(.button){
   text-decoration: none;
-  color: var(--text-color-primary);
+  color: var(--color-text-primary);
 }
 
 .button {
   border-radius: var(--border-radius-small);
-  background: rgba(0,0,0, 0.1);
+  background: var(--bg-buttonBg-primary);
+  color: var(--color-buttonText-primary);
   padding: 6px 10px;
   cursor: pointer;
+  width: fit-content;
 }
 
 .button:hover {
-  background: rgba(0,0,0, 0.2);
+  background: var(--bg-buttonBg-primary-hover);
 }
 
+
+/* icons */
 .icon-button-wrapper {
+  height: calc(var(--icon-height) + 6pt);
+  width: calc(var(--icon-height) + 6pt);
+  padding: 3pt;
+  border-radius: 3.5px;
+}
+
+div.icon-button-wrapper:hover {
+  background: var(--bg-secondary);
+}
+
+span.icon-container {
+  display: inline-block;
   height: var(--icon-height);
   width: var(--icon-width);
 }
+
+.icon {
+  height: 100%;
+  width: 100%;
+  filter: var(--filter-icon-primary);
+}
+
+.icon-x {
+  padding: 2px;
+}
+
 
 /* links */
 .link {
@@ -28,10 +54,7 @@ a:has(.button){
 }
 
 
-
-
 /* cards */
-
 .cards-box {
   display: flex;
   flex-wrap: wrap;
@@ -50,7 +73,7 @@ a:has(.button){
 }
 
 .card hr {
-  border-color: var(--text-color-primary-40);
+  border-color: var(--color-text-primary-40);
 }
 
 .cards-medium .card {

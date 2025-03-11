@@ -2,7 +2,7 @@ import { sql } from "slonik";
 import { z } from 'zod';
 import { DaysOfWeek } from "./enums/DaysOfTheWeek";
 import { MealTime } from "./enums/MealTime";
-import { Database, MealResultType, MealPlanResultType, Zods } from "../db/db";
+import { Database, MealResultType, MealPlanResultType, Zods, sqlAliases } from "../db/db";
 import { GetCurrentUser } from "@/auth/auth";
 import { Meal } from "./Meal";
 
@@ -110,12 +110,12 @@ export class MealPlan {
     }
 
     // first must delete all meals from these plans
-    if(!Meal.DeleteMealsForPlans(MealPlanIDList)){
+    if(!(await Meal.DeleteMealsForPlans(MealPlanIDList))){
       console.log('error while deleting meal plans\'s meals');
       return false;
     }
 
-    let query = sql.typeAlias('void')`
+    let query = sqlAliases.typeAlias('void')`
       DELETE FROM meal_plans
       WHERE 1=1
 

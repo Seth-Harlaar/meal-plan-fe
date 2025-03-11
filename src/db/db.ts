@@ -1,4 +1,4 @@
-import { createPool, DatabasePool, sql } from 'slonik';
+import { createPool, createSqlTag, DatabasePool, sql } from 'slonik';
 import { z } from 'zod';
 import { Meal } from '../models/Meal';
 
@@ -58,6 +58,16 @@ export class Zods {
     current_mealplan_id: z.number(),
   })
 }
+
+
+export const sqlAliases = createSqlTag({
+  typeAliases: {
+    id: z.object({
+      id: z.number(),
+    }),
+    void: z.object({}).strict(),
+  }
+});
 
 
 // types

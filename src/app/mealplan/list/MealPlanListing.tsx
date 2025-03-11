@@ -13,22 +13,25 @@ export default function MealPlanListing(
   }
 ){
   const [primaryMealPlanIDState, setPrimaryMealPlanIDState] = useState<number>(primaryMealPlanId);
+  const [mealPlans, setMealPlans] = useState<MealPlanResultType[]>(mealPlanDataList);
 
   function handleMealCardClick(mealPlanId: number){
     SetCurrenMealPlan(mealPlanId);
     setPrimaryMealPlanIDState(mealPlanId);
   }
 
-  function handleDeleteClick(mealPlanId: number){
+  async function handleDeleteClick(mealPlanId: number){
     const confirmed = window.confirm("Are you sure you want to delete this meal plan?");
     if(confirmed){
-      DeleteMealPlan(mealPlanId);
+      if(await DeleteMealPlan(mealPlanId)){
+        setMealPlans(prevMealPlans => prevMealPlans.filter(mp => mp.id != mealPlanId));
+      }
     }
   }
 
   return (
     <>
-      {mealPlanDataList.map((mealplan, index) => {
+      {mealPlans.map((mealplan, index) => {
         const isPrimary = mealplan.id == primaryMealPlanIDState;
         const mealPlanMeals = mealDataList.filter(md => md.meal_plan_id == mealplan.id);
         const recipes = recipeDataList.filter(rd => mealPlanMeals.map(md => md.recipe_id).includes(rd.id));

@@ -11,14 +11,15 @@ import { MealTime } from "@/models/enums/MealTime";
 import './MealListing.css';
 
 export default function MealPlanEditView(
-  {mealDataList, recipeDataList}:
-  {mealDataList: MealResultType[], recipeDataList: RecipeResultType[]}
+  {mealDataList, recipeDataList, isNew = false}:
+  {mealDataList: MealResultType[], recipeDataList: RecipeResultType[]
+    isNew?:boolean,
+  }
 ){
   const {openModal} = useContext(ModalContext);
   const [meals, setMeals] = useState<MealResultType[]>(mealDataList);
   const [recipes, setRecipes] = useState<RecipeResultType[]>(recipeDataList);
-  const [changesMade, setChangesMade] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [changesMade, setChangesMade] = useState(isNew);
 
   function addMealToPlan(mealData: MealResultType){
     setMeals(mealList => [...mealList, mealData]);
@@ -65,7 +66,9 @@ export default function MealPlanEditView(
   return (
     <>
       {changesMade && 
-        <button onClick={() => saveMealPlan(meals.filter(m => m != null))}>Save Changes</button>
+        <div className="content-right">
+          <span className="button" onClick={() => saveMealPlan(meals.filter(m => m != null))}>Save Changes</span>
+        </div>
       }
       {Object.keys(DaysOfWeek)
         .filter((key) => isNaN(Number(key)))

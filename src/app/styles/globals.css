@@ -71,22 +71,6 @@ body {
   flex: 1;
 }
 
-/* icons */
-span.icon-container {
-  display: inline-block;
-  height: var(--icon-height);
-  width: var(--icon-width);
-}
-
-.icon {
-  height: 100%;
-  width: 100%;
-}
-
-.icon-x {
-  padding: 2px;
-}
-
 /* layouts */
 .max-width-1000 {
   max-width: 1000px;
