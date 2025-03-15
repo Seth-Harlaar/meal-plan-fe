@@ -2,7 +2,6 @@
 
 import React, { createContext, useState } from "react";
 import Modal from "../components/Modal";
-import { createPortal } from "react-dom";
 
 type ModalContextType = {
   modalVisible: boolean;
@@ -69,10 +68,7 @@ function ModalProvider({children}: {children: React.ReactNode}){
       <ModalContext.Provider value={contextValue}>
         {children}
         {modalVisible &&
-          createPortal(
-            <Modal>{modalChildren}</Modal>,
-            document.body,
-          )
+          <Modal>{modalChildren}</Modal>
         }
       </ModalContext.Provider>
     </>

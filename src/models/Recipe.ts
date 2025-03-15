@@ -33,10 +33,10 @@ export default class Recipe {
 
       } else {
         await pool.one(sql.type(z.object({id: z.number()}))`
-          UPDATE meals
+          UPDATE recipes
             SET name = ${this.Name},
             instructions = ${this.Instructions},
-            prep_time = ${this.PrepTime},
+            prep_time = ${this.PrepTime}
           WHERE id = ${this.RecipeId}
           RETURNING id;
         `);

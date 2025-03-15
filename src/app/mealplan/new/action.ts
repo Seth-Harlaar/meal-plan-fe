@@ -22,7 +22,7 @@ export async function saveMealPlan(newMealData: MealResultType[]) {
   const user = await GetCurrentUser();
   if(!user){
     console.log('User not logged in.');
-    return null;
+    return false;
   }
 
   const mealPlanId = newMealData[0].meal_plan_id;
@@ -50,7 +50,9 @@ export async function saveMealPlan(newMealData: MealResultType[]) {
 
   } catch (e) {
     console.log('Error while trying to save meal plan: ', e);
+    return false;
   }
+  return true;
 }
 
 export async function GetMeal(mealId: number){

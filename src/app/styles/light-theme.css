@@ -8,6 +8,7 @@
   --color-highlight-60: rgba(245, 185, 81, 0.6);
   --color-blue: #007cba;
   --color-blue-60: #007cba99;
+  --color-blue-80: #007cbaCC;
   
 
   /*  bgs */
@@ -33,7 +34,8 @@
   
   /* buttons */
   --bg-buttonBg-primary: var(--color-blue);
-  --bg-buttonBg-primary-hover: var(--color-blue-60);
+  --bg-buttonBg-primary-hover: var(--color-blue-80);
+  --bg-buttonBg-primary-disabled: var(--color-blue-60);
   --color-buttonText-primary: var(--color-text-opposite);
 
 

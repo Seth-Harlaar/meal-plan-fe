@@ -24,7 +24,6 @@
 
 #modal {
   height: 80%;
-  width: 65%;
   background: var(--bg-secondary);
   color: var(--color-text-primary);
   border-radius: 5px;

@@ -4,6 +4,8 @@ import { MealResultType, RecipeResultType } from "@/db/db";
 import { ModalContext } from "@/providers/ModalProvider";
 import { saveRecipe } from "./new/action";
 
+import './popup-styles.css';
+
 export default function EditMealPopup(
   {mealData, recipeDataList, replaceRecipe, addRecipeToData}: 
   {
@@ -53,7 +55,7 @@ export default function EditMealPopup(
     });
   }
 
-  return <>
+  return <div id="edit-meal-popup">
     <h1>Change meal</h1>
     <div>
       <select onChange={(e) => setSelectedRecipeId(Number(e.target.value))}>
@@ -65,7 +67,7 @@ export default function EditMealPopup(
     </div>
     <div className="button" onClick={saveSelection}>Save Selection</div>
 
-    <h2>Or</h2>
+    <h4>Or</h4>
     <h1>Create a new one</h1>
     <div>
       <h3>Recipe Name:</h3>
@@ -74,5 +76,5 @@ export default function EditMealPopup(
       <input type="text" onChange={(e) => setRecipeInstructions(e.target.value)}/>
     </div>
     <div className="button" onClick={saveNewRecipeClick}>Save New Recipe</div>
-    </>
+  </div>
 }

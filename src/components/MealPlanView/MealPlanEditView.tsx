@@ -20,6 +20,8 @@ export default function MealPlanEditView(
   const [meals, setMeals] = useState<MealResultType[]>(mealDataList);
   const [recipes, setRecipes] = useState<RecipeResultType[]>(recipeDataList);
   const [changesMade, setChangesMade] = useState(isNew);
+  const [waiting, setWaiting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
 
   function addMealToPlan(mealData: MealResultType){
     setMeals(mealList => [...mealList, mealData]);
@@ -63,11 +65,24 @@ export default function MealPlanEditView(
     setChangesMade(true);
   }
 
+  async function handleSaveChangesClick(){
+    setWaiting(true);
+    if(await saveMealPlan(meals.filter(m => m != null))){
+      setChangesMade(false);
+      setStatusMessage("Changes saved successfully.");
+    } else {
+      setStatusMessage("Changes could not be saved.");
+    }
+
+    setWaiting(false);
+  }
+
   return (
     <>
+      {statusMessage}
       {changesMade && 
         <div className="content-right">
-          <span className="button" onClick={() => saveMealPlan(meals.filter(m => m != null))}>Save Changes</span>
+          <span className={`button ${waiting ? "disabled" : ""}`} onClick={handleSaveChangesClick}>Save Changes</span>
         </div>
       }
       {Object.keys(DaysOfWeek)

@@ -10,12 +10,16 @@ a:has(.button){
   background: var(--bg-buttonBg-primary);
   color: var(--color-buttonText-primary);
   padding: 6px 10px;
-  cursor: pointer;
   width: fit-content;
 }
 
-.button:hover {
+.button:not(.disabled):hover {
   background: var(--bg-buttonBg-primary-hover);
+}
+
+.button.disabled {
+  background-color: var(--bg-buttonBg-primary-disabled);
+  cursor: default;
 }
 
 

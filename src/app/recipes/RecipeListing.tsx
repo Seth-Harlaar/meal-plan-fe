@@ -4,6 +4,7 @@ import { RecipeResultType } from "@/db/db"
 import { ModalContext } from "@/providers/ModalProvider";
 import { useContext, useEffect, useState } from "react";
 import RecipeDetailsPopup from "./RecipeDetailsPopup";
+import RecipeEditPopup from "./RecipeEditPopup";
 
 export default function RecipeListing(
   {RecipeData}:
@@ -20,12 +21,11 @@ export default function RecipeListing(
   }, [searchText]);
 
   function OpenRecipeDetails(recipeData: RecipeResultType){
-    openModal(<RecipeDetailsPopup recipeData={recipeData} />);
+    openModal( <RecipeEditPopup recipeData={recipeData} /> );
   }
 
   return (
     <>
-      <div onClick={closeModal}>Open sesame</div>
       <input type="text" onChange={e => setSearchText(e.target.value)} />
 
       <div className="cards-box cards-small">
