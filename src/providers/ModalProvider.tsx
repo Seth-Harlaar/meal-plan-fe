@@ -1,8 +1,8 @@
 'use client'
 
 import React, { createContext, useState } from "react";
-
 import Modal from "../components/Modal";
+import { createPortal } from "react-dom";
 
 type ModalContextType = {
   modalVisible: boolean;
@@ -68,7 +68,12 @@ function ModalProvider({children}: {children: React.ReactNode}){
     <>
       <ModalContext.Provider value={contextValue}>
         {children}
-        {modalVisible ? <Modal>{modalChildren}</Modal> : null}
+        {modalVisible &&
+          createPortal(
+            <Modal>{modalChildren}</Modal>,
+            document.body,
+          )
+        }
       </ModalContext.Provider>
     </>
   );
