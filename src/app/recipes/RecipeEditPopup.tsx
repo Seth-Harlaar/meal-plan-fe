@@ -2,10 +2,10 @@
 
 import { RecipeResultType } from "@/db/db"
 import { useContext, useState } from "react";
-
-import './popup-styles.css';
 import { ModalContext } from "@/providers/ModalProvider";
 import { saveRecipe } from "../mealplan/new/action";
+
+import './popup-styles.css';
 
 export default function RecipeEditPopup(
   {recipeData}:

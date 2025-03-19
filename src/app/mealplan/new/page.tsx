@@ -6,7 +6,7 @@ import PageTitle from "@/components/PageTitle";
 import { MealPlan } from "@/models/MealPlan";
 import { Meal } from "@/models/Meal";
 import MealPlanEditView from "../../../components/MealPlanView/MealPlanEditView";
-import { MealResultType, Zods } from "@/db/db";
+import { MealPlanResultType, MealResultType, Zods } from "@/db/db";
 import Recipe, { RecipeSearchCriteria } from "@/models/Recipe";
 import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
 import { MealTime } from "@/models/enums/MealTime";
@@ -18,6 +18,10 @@ export default async function Home() {
       <LogInMessage/>
     );
   }
+
+  // mealplan
+  const mealPlan: MealPlan= new MealPlan();
+  mealPlan.Name = MealPlan.genericMealPlanName();
 
   // meals
   const newMeals: MealResultType[] = [];
@@ -33,6 +37,7 @@ export default async function Home() {
     newMeals.push(newMealData);
   }
 
+  // recipes
   let recipes: Recipe[] = [];
   if(newMeals.length > 0){
     recipes = await Recipe.Search(new RecipeSearchCriteria());
@@ -40,9 +45,8 @@ export default async function Home() {
 
   return (
     <div id="meal-plan-days">
-      <PageTitle titleText="New Meal Plan"/>
-      <PageTitle titleText={MealPlan.genericMealPlanName()}/>
-      <MealPlanEditView mealDataList={newMeals} recipeDataList={recipes.map(r => Recipe.Serialize(r))} isNew={true} />
+      <PageTitle titleText={"New Meal Plan - " + mealPlan.Name}/>
+      <MealPlanEditView mealPlanData={MealPlan.Serialize(mealPlan)} mealDataList={newMeals} recipeDataList={recipes.map(r => Recipe.Serialize(r))} isNew={true} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client'
 import MealPlanListItem from ".//MealPlanListItem";
-import { MealResultType, RecipeResultType } from "@/db/db";
+import { MealPlanResultType, MealResultType, RecipeResultType } from "@/db/db";
 import { useContext, useEffect, useState, useTransition } from "react";
 import { GetRandomRecipe, saveMealPlan } from "../../app/mealplan/new/action";
 import { DaysOfWeek } from "@/models/enums/DaysOfTheWeek";
@@ -9,10 +9,11 @@ import EditMealPopup from "../../app/mealplan/EditMealPopup";
 import { MealTime } from "@/models/enums/MealTime";
 
 import './MealListing.css';
+import EditMealPlanPopup from "./EditMealPlanPopup";
 
 export default function MealPlanEditView(
-  {mealDataList, recipeDataList, isNew = false}:
-  {mealDataList: MealResultType[], recipeDataList: RecipeResultType[]
+  {mealPlanData, mealDataList, recipeDataList, isNew = false}:
+  {mealPlanData: MealPlanResultType , mealDataList: MealResultType[], recipeDataList: RecipeResultType[]
     isNew?:boolean,
   }
 ){
@@ -51,6 +52,10 @@ export default function MealPlanEditView(
       replaceRecipe={replaceRecipe} addRecipeToData={addRecipe}/>);
   }
 
+  function openEditDetailsModal(){
+    openModal(<EditMealPlanPopup mealPlan={mealPlanData}/>);
+  }
+
   function addRandomMealToDay(dayOfWeek: number){
     const randomRecipe = recipes[Math.floor(Math.random() * recipes.length) + 1];
     const mealPlanId = mealDataList[0].meal_plan_id;
@@ -80,11 +85,14 @@ export default function MealPlanEditView(
   return (
     <>
       {statusMessage}
-      {changesMade && 
-        <div className="content-right">
-          <span className={`button ${waiting ? "disabled" : ""}`} onClick={handleSaveChangesClick}>Save Changes</span>
-        </div>
-      }
+      <div className="button-row">
+        <div className="button" onClick={openEditDetailsModal}>Edit Details</div>
+        {changesMade && 
+          <div className="content-right">
+            <span className={`button ${waiting ? "disabled" : ""}`} onClick={handleSaveChangesClick}>Save Changes</span>
+          </div>
+        }
+      </div>
       {Object.keys(DaysOfWeek)
         .filter((key) => isNaN(Number(key)))
         .map((day, dayIndex) => {
