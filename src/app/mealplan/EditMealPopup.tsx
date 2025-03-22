@@ -9,17 +9,17 @@ import { MealTime, MealTimeAsString } from "@/models/enums/MealTime";
 import './popup-styles.css';
 
 export default function EditMealPopup(
-  {mealData, recipeDataList, replaceRecipe, addRecipeToData}: 
+  {mealData, recipeDataList, updateMeal, addRecipeToData}: 
   {
     mealData: MealResultType,
     recipeDataList: RecipeResultType[],
-    replaceRecipe: (mealData: MealResultType, recipeId: number) => void,
+    updateMeal: (mealData: MealResultType) => void,
     addRecipeToData: (recipeData: RecipeResultType) => void,
   }
 ){
-  const {closeModal, setModalError} = useContext(ModalContext);
+  const {closeModal, setModalError, clearModalErrors, addModalError} = useContext(ModalContext);
   // inputs
-  const [selectedRecipeId, setSelectedRecipeId] = useState(-1);
+  const [selectedRecipeId, setSelectedRecipeId] = useState(mealData.recipe_id);
   const [recipeTitle, setRecipeTitle] = useState("");
   const [recipeInstructions, setRecipeInstructions] = useState("");
   const [mealDay, setMealDay] = useState(mealData.day_for);
@@ -33,47 +33,46 @@ export default function EditMealPopup(
       || mealTime != mealData.time_for
   }, [recipeTitle, recipeInstructions, mealDay, mealTime, selectedRecipeId]);
 
-  function saveSelection(){
-    if(selectedRecipeId == -1){
-      setModalError("Please select a recipe first, or create a new one");
-      return;
+  function handleSaveChangesClick(){
+    clearModalErrors();
+    // new recipe changes
+    if((recipeTitle != "" || recipeInstructions != "") && selectedRecipeId != mealData.recipe_id){
+      addModalError("Reset the recipe selection drop down or clear the new recipe fields. Cannot perform both actions at once.")
     }
-    replaceRecipe(mealData, selectedRecipeId);
-    closeModal();
-  }
 
-  function saveNewRecipeClick(){
-    if(recipeTitle == ""){
-      setModalError("You must provide a name for the recipe");
-      return;
-    }
-    saveNewRecipe();
-  }
-
-  function saveNewRecipe(){
-    startTransition(async () => {
-      let newRecipe = await saveRecipe({
-        id: 0,
-        name: recipeTitle,
-        instructions: recipeInstructions,
-        prep_time: 15,
+    if(recipeTitle != "" || recipeInstructions != ""){
+      startTransition(async () => {
+        let newRecipe = await saveRecipe({
+          id: 0,
+          name: recipeTitle,
+          instructions: recipeInstructions,
+          prep_time: 15,
+        });
+        
+        if(newRecipe){
+          addRecipeToData(newRecipe);
+          mealData.recipe_id = newRecipe.id;
+          mealData.day_for = mealDay;
+          mealData.time_for = mealTime;
+          updateMeal(mealData);
+          closeModal();
+        }
       });
-      
-      if(newRecipe){
-        addRecipeToData(newRecipe);
-        replaceRecipe(mealData, newRecipe.id);
-        closeModal();
-      }
-    });
+    } else {
+      mealData.recipe_id = selectedRecipeId;
+      mealData.day_for = mealDay;
+      mealData.time_for = mealTime;
+      updateMeal(mealData);
+    }
+
+    closeModal();
   }
 
   return <div id="edit-meal-popup">
     <div className="left">
-      <div className={`button ${changesMade ? "": "disabled"}`} onClick={saveSelection}>Save Changes</div>
-
       <h1>Change recipe</h1>
       <div>
-        <select onChange={(e) => setSelectedRecipeId(Number(e.target.value))}>
+        <select onChange={(e) => setSelectedRecipeId(Number(e.target.value))} defaultValue={mealData.recipe_id}>
           <option value="-1">Select a recipe</option>
           {recipeDataList.map((r, index) => {
             return <option value={r.id} key={index}>{r.name}</option>
@@ -97,11 +96,11 @@ export default function EditMealPopup(
       <h1>Edit meal details</h1>
       <div>
         <h3>Meal day:</h3>
-        <select onChange={(e) => setMealDay(parseInt(e.target.value))}>
+        <select onChange={(e) => setMealDay(parseInt(e.target.value))} defaultValue={mealData.day_for}>
           {Object.keys(DaysOfWeek)
             .filter((key) => isNaN(Number(key)))
             .map((day, dayIndex) => {
-              return <option value={dayIndex} selected={mealData.day_for == dayIndex}>{day}</option>
+              return <option value={dayIndex} key={dayIndex}>{day}</option>
             })
           }
         </select>
@@ -109,16 +108,18 @@ export default function EditMealPopup(
       
       <div>
         <h3>Time for:</h3>
-        <select onChange={(e) => setMealTime(parseInt(e.target.value))}>
+        <select onChange={(e) => setMealTime(parseInt(e.target.value))} defaultValue={mealData.time_for}>
           {Object.entries(MealTime)
             .filter(([key, value]) => isNaN(Number(key))) // Ensure keys are valid strings
             .map(([time, timeIndex]) => (
-              <option key={timeIndex} value={timeIndex} selected={mealData.time_for == timeIndex}>
+              <option key={timeIndex} value={timeIndex}>
                 {MealTimeAsString(Number(timeIndex))}
               </option>
             ))}
         </select>
       </div>
+      {changesMade ? "yes" : "no"}
+      <button className={`button`} disabled={!changesMade} onClick={() => handleSaveChangesClick()}>Save Changes</button>
     </div>
   </div>
 }

@@ -45,6 +45,18 @@
   cursor: pointer;
 }
 
+.meal.empty-meal {
+  height: 90px;
+  border: 2px dashed var(--color-text-primary-20);
+  color: var(--color-text-primary-60);
+  display: flex;
+  justify-content: center;
+}
+
+.meal.empty-meal:hover {
+  background: var(--bg-primary-hover);
+}
+
 @media only screen and (max-width: 500px) {
   .meal {
     flex-direction: column;

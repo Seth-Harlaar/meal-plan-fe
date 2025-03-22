@@ -6,6 +6,26 @@
   gap: 12px;
 }
 
+
+#edit-meal-popup .left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#edit-meal-popup .right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#edit-meal-popup .button {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+}
+
+/* desktop only */
 @media only screen and (min-width: 801px){
   #edit-meal-popup {
     min-width: 400px;
@@ -18,14 +38,9 @@
   }
 }
 
-#edit-meal-popup .left {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-#edit-meal-popup .button {
-  position: absolute;
-  bottom: 16px;
-  right: 16px;
+/* mobile only */
+@media only screen and (max-width: 800px){
+  #edit-meal-popup .button {
+    position: initial;
+  }
 }

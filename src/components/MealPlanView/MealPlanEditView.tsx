@@ -33,23 +33,28 @@ export default function MealPlanEditView(
     setRecipes(recipeList => [...recipeList, recipeData]);
   }
 
-  function replaceRecipe(mealData: MealResultType, recipeId: number){
-    let mealIndex = meals.indexOf(mealData);
+  function updateMeal(mealData: MealResultType){
+    let meal = meals.find(m => m.id == mealData.id);
+    if(!meal)
+      return;
+
+    let mealIndex = meals.indexOf(meal);
     let newMealList = [...meals];
-    newMealList[mealIndex].recipe_id = recipeId;
+    newMealList[mealIndex] = mealData;
     setMeals(newMealList);
     setChangesMade(true);
   }
 
   function rerollRecipe(mealData: MealResultType) {
     const randomRecipe = recipes[Math.floor(Math.random() * recipes.length) + 1];
-    replaceRecipe(mealData, randomRecipe.id);
+    mealData.recipe_id = randomRecipe.id;
+    updateMeal(mealData);
     setChangesMade(true);
   }
 
   function openEditMealModal(mealData: MealResultType){
     openModal(<EditMealPopup mealData={mealData} recipeDataList={recipes} 
-      replaceRecipe={replaceRecipe} addRecipeToData={addRecipe}/>);
+      updateMeal={updateMeal} addRecipeToData={addRecipe}/>);
   }
 
   function openEditDetailsModal(){
@@ -100,6 +105,11 @@ export default function MealPlanEditView(
           return <div className="day" key={dayIndex}>
             <hr/>
             <h1>{day}</h1>
+            {meals.filter(m => m?.day_for == dayValue).length == 0 &&
+              <div className="meal empty-meal" onClick={() => addRandomMealToDay(dayValue)}>
+                <span>Click to add a meal.</span>
+              </div>
+            }
             {meals.filter(m => m?.day_for == dayValue).map((mealData, index) => {
               let mealRecipe = recipes.find(rd => rd.id == mealData.recipe_id) ?? {id: 0, name: "", instructions: "", prep_time: 0};
               return <MealPlanListItem mealData={mealData} recipeData={mealRecipe} key={index}

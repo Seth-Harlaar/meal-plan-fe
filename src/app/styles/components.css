@@ -5,6 +5,11 @@ a:has(.button){
   color: var(--color-text-primary);
 }
 
+button.button {
+  border: none;
+  font-size: 16pt;
+}
+
 .button {
   border-radius: var(--border-radius-small);
   background: var(--bg-buttonBg-primary);
