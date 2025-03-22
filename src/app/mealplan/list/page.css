@@ -12,3 +12,8 @@
   color: var(--color-text-primary-60);
 }
 
+
+#share-plan-popup {
+  min-width: 300px;
+  max-width: 400px;
+}

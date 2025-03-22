@@ -2,6 +2,9 @@
 
 import { GetCurrentUser } from "@/auth/auth";
 import { MealPlan } from "@/models/MealPlan";
+import { MealPlanShare } from "@/models/MealPlanShare";
+import { MealPlanResultType } from "@/db/db";
+import { User } from "@/models/User";
 
 
 // actions
@@ -29,4 +32,22 @@ export async function DeleteMealPlan(MealPlanID: number){
 
   console.log('Failed to delete  meal plan - User is not logged in');
   return false;
+}
+
+
+
+export async function ShareMealPlan(mealPlanData: MealPlanResultType, userEmail: string){
+  const user = await GetCurrentUser();
+  if(!user){
+    console.log('Failed to share meal plan becuase user is not logged in');
+    return;
+  }
+
+  // get other user
+  var shareeUser = User
+
+  var share = Object.assign(new MealPlanShare, {
+    MealPlanId: mealPlanData.id,
+    OwnerUserId: user.UserId,
+  });
 }

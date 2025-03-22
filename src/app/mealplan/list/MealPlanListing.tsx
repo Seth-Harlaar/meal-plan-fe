@@ -1,10 +1,12 @@
 'use client'
 import { MealPlanResultType, MealResultType, RecipeResultType, UserResultType } from "@/db/db";
 import { DeleteMealPlan, SetCurrenMealPlan } from "./action";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import './page.css';
-import { ArrowIcon, IconButton, LinkWrapper, StarIcon, XIcon } from "@/components/Icons";
+import { ArrowIcon, IconButton, LinkWrapper, ShareIcon, StarIcon, XIcon } from "@/components/Icons";
+import { ModalContext } from "@/providers/ModalProvider";
+import ShareMealPlanPopup from "./ShareMealPlanPopup";
 
 export default function MealPlanListing(
   { mealPlanDataList, mealDataList, recipeDataList, primaryMealPlanId } :
@@ -12,6 +14,7 @@ export default function MealPlanListing(
     recipeDataList: RecipeResultType[], primaryMealPlanId: number,
   }
 ){
+  const {openModal} = useContext(ModalContext);
   const [primaryMealPlanIDState, setPrimaryMealPlanIDState] = useState<number>(primaryMealPlanId);
   const [mealPlans, setMealPlans] = useState<MealPlanResultType[]>(mealPlanDataList);
 
@@ -27,6 +30,10 @@ export default function MealPlanListing(
         setMealPlans(prevMealPlans => prevMealPlans.filter(mp => mp.id != mealPlanId));
       }
     }
+  }
+
+  function handleShareClick(mealPlanData: MealPlanResultType){
+    openModal(<ShareMealPlanPopup mealPlanData={mealPlanData}/>)
   }
 
   return (
@@ -53,6 +60,9 @@ export default function MealPlanListing(
               </IconButton>
               <IconButton onClick={() => handleMealCardClick(mealplan.id)}>
                 <StarIcon />
+              </IconButton>
+              <IconButton onClick={() => handleShareClick(mealplan)}>
+                <ShareIcon/>
               </IconButton>
               <LinkWrapper href={`/mealplan/${mealplan.id}`}>
                 <ArrowIcon />

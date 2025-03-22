@@ -51,3 +51,7 @@ export function StarIcon() {
 export function XIcon() {
   return <IconContainer src="/icons/x.svg" className="icon-x" />;
 }
+
+export function ShareIcon(){
+  return <IconContainer src="/icons/share.svg" className="icon-share" />;
+}

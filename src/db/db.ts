@@ -1,5 +1,5 @@
 import { createPool, createSqlTag, DatabasePool, sql } from 'slonik';
-import { z } from 'zod';
+import { z, ZodTransformer } from 'zod';
 import { Meal } from '../models/Meal';
 
 export class Database {
@@ -30,6 +30,14 @@ export class Zods {
     name: z.string(),
     created_by_user_id: z.number(),
   });
+
+  // mealplan_shares
+  static mealPlanShare = z.object({
+    id: z.number(),
+    meal_plan_id: z.number(),
+    owner_user_id: z.number(),
+    sharee_user_id: z.number(),
+  })
 
   // meals
   static mealResult = z.object({
@@ -74,6 +82,7 @@ export const sqlAliases = createSqlTag({
 export type MealResultType = z.infer<typeof Zods.mealResult>;
 export type FoodResultType = z.infer<typeof Zods.foodObj>;
 export type MealPlanResultType = z.infer<typeof Zods.mealPlan>;
+export type MealPlanShareResultType = z.infer<typeof Zods.mealPlanShare>;
 export type RecipeResultType = z.infer<typeof Zods.recipeResult>;
 export type UserResultType = z.infer<typeof Zods.userObj>;
 
