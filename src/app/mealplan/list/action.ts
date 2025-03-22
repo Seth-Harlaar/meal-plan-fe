@@ -4,7 +4,7 @@ import { GetCurrentUser } from "@/auth/auth";
 import { MealPlan } from "@/models/MealPlan";
 import { MealPlanShare } from "@/models/MealPlanShare";
 import { MealPlanResultType } from "@/db/db";
-import { User } from "@/models/User";
+import { User, UserSearchCriteria } from "@/models/User";
 
 
 // actions
@@ -44,10 +44,14 @@ export async function ShareMealPlan(mealPlanData: MealPlanResultType, userEmail:
   }
 
   // get other user
-  var shareeUser = User
+  var shareeUser = await User.GetUser(new UserSearchCriteria({Email: userEmail}));
+  if(!shareeUser)
+    return;
 
   var share = Object.assign(new MealPlanShare, {
     MealPlanId: mealPlanData.id,
     OwnerUserId: user.UserId,
+    ShareeUserId: shareeUser.UserId,
   });
+  share.SaveChanges();
 }

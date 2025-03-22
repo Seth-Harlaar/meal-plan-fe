@@ -30,7 +30,12 @@ export async function GET(request: NextRequest) {
     console.log('user loggin in:', user);
 
     if(!user){
-      user = new User(payload['given_name'], payload['family_name'], payload['email'], payload['sub']);
+      user = Object.assign(new User(), {
+        GoogleId: payload['sub'],
+        FirstName: payload['given_name'],
+        LastName: payload['family_name'],
+        Email: payload['email'],
+      });
       await user.SaveUser();
       console.log('created new', user);
       if(user.UserId <= 0){
