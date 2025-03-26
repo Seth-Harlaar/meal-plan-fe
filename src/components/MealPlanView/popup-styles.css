@@ -1,0 +1,14 @@
+
+
+
+#edit-mealplan-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media only screen and (min-width: 801px){
+  #edit-mealplan-popup {
+    min-width: 400px;
+  }
+}

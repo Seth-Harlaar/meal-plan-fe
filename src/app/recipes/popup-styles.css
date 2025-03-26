@@ -1,0 +1,15 @@
+
+
+
+.recipe-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media only screen and (min-width: 801px){
+  .recipe-details {
+    min-width: 400px;
+    max-width: 450px;
+  }
+}

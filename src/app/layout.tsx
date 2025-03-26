@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
-import "./styles/globals.css";
 import Providers from "../providers/providers";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar/Navbar";
 
 // css
+import "./styles/globals.css";
 import './styles/components.css';
 import './styles/variables.css';
-import './styles/dark-theme.css';
-import { getSession } from "next-auth/react";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]/auth";
+import './styles/light-theme.css';
+import './styles/atomics.css';
 
 export const metadata: Metadata = {
   title: "Create Next App",

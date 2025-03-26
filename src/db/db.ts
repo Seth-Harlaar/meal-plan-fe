@@ -1,5 +1,5 @@
-import { createPool, DatabasePool, sql } from 'slonik';
-import { z } from 'zod';
+import { createPool, createSqlTag, DatabasePool, sql } from 'slonik';
+import { z, ZodTransformer } from 'zod';
 import { Meal } from '../models/Meal';
 
 export class Database {
@@ -16,21 +16,6 @@ export class Database {
 
 // zod type definitions
 export class Zods {
-
-  // full_meals
-  static fullMealObj = z.object({
-    id: z.number(),
-    name: z.string(),
-    prep_time: z.number(),
-    food_id: z.number(),
-  });
-  
-  // partial_meals
-  static partialMealObj = z.object({
-    id: z.number(),
-    food_serial: z.string(),
-  });
-
   // foods
   static foodObj = z.object({
     id: z.number(),
@@ -43,28 +28,33 @@ export class Zods {
   static mealPlan = z.object({
     id: z.number(),
     name: z.string(),
+    created_by_user_id: z.number(),
   });
 
-  // meal_plan_meals
-  static mealPlanMeal = z.object({
+  // mealplan_shares
+  static mealPlanShare = z.object({
     id: z.number(),
     meal_plan_id: z.number(),
-    meal_id: z.number(),
-    is_full_meal: z.boolean(),
-  });
+    owner_user_id: z.number(),
+    sharee_user_id: z.number(),
+  })
 
-  // meal_plan_meals right join meal_plans
-  static mealPlanMealsRJMealPlans = z.object({
+  // meals
+  static mealResult = z.object({
     id: z.number(),
     meal_plan_id: z.number(),
-    meal_id: z.number(),
-    is_full_meal: z.boolean(),
     day_for: z.number(),
     time_for: z.number(),
-    mplan_id: z.number(),
-    user_id: z.number(),
-    name: z.string(),
+    recipe_id: z.number(),
   });
+
+  // recipes 
+  static recipeResult = z.object({
+    id: z.number(),
+    name: z.string(),
+    instructions: z.string(),
+    prep_time: z.number(),
+  })
 
   // users
   static userObj = z.object({
@@ -73,10 +63,28 @@ export class Zods {
     last_name: z.string(),
     email: z.string(),
     google_id: z.string(),
+    current_mealplan_id: z.number(),
   })
 }
 
 
+export const sqlAliases = createSqlTag({
+  typeAliases: {
+    id: z.object({
+      id: z.number(),
+    }),
+    void: z.object({}).strict(),
+  }
+});
+
+
+// types
+export type MealResultType = z.infer<typeof Zods.mealResult>;
+export type FoodResultType = z.infer<typeof Zods.foodObj>;
+export type MealPlanResultType = z.infer<typeof Zods.mealPlan>;
+export type MealPlanShareResultType = z.infer<typeof Zods.mealPlanShare>;
+export type RecipeResultType = z.infer<typeof Zods.recipeResult>;
+export type UserResultType = z.infer<typeof Zods.userObj>;
 
 // queries
 export class queries {
@@ -85,7 +93,7 @@ export class queries {
     return sql.type(Zods.foodObj)
       `SELECT * FROM foods
           WHERE type NOT IN (10, 20, 30)
-            ${Meals.length > 0 ? sql.unsafe`AND id NOT IN (${sql.join(Meals.map(x => x.mealId), sql.fragment`, `)})` : sql.unsafe``}
+            ${Meals.length > 0 ? sql.unsafe`AND id NOT IN (${sql.join(Meals.map(x => x.MealId), sql.fragment`, `)})` : sql.unsafe``}
           ORDER BY RANDOM()
           LIMIT 1;`
   }

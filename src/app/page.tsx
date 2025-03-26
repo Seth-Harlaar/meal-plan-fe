@@ -1,14 +1,41 @@
+'use server'
 import React from "react";
-import PageTitle from "../components/PageTitle";
-import MealListing from "../components/MealListing";
-import { MealPlan } from "../models/MealPlan";
+import { MealPlan, MealPlanSearchCriteria } from "../models/MealPlan";
+import { GetCurrentUser } from "@/auth/auth";
+import LogInMessage from "@/components/LogInMessage";
+import { Meal, MealSearchCriteria } from "@/models/Meal";
+import Recipe, { RecipeSearchCriteria } from "@/models/Recipe";
 
 import './page.css'
-import { getSession } from "./api/auth/[...nextauth]/auth";
+import MealPlanListView from "@/components/MealPlanView/MealPlanListView";
 
 export default async function Home() {
-  const daysOfWeek: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const mealPlans = await MealPlan.GetMealPlans([5]);
+  const user = await GetCurrentUser();
+  if(!user){
+    return (
+      <LogInMessage/>
+    );
+  }
+
+  const mealPlans = await MealPlan.GetMealPlans(new MealPlanSearchCriteria({
+    CreatedByUserIdList: [user.UserId]
+  }));
+  
+  let mealList: Meal[] = [];
+  const primaryMealPlan = mealPlans.find(m => m.MealPlanId == user.CurrentMealplanID) || mealPlans[0];
+
+  if(primaryMealPlan){
+    mealList = await Meal.GetMeals(Object.assign(new MealSearchCriteria(), {
+      MealPlanIdList: [primaryMealPlan.MealPlanId],
+    }));
+  }
+
+  let recipes: Recipe[] = [];
+  if(mealList.length > 0){
+    recipes = await Recipe.Search(Object.assign(new RecipeSearchCriteria(), {
+      RecipeIdList: mealList.map(mp => mp.RecipeId),
+    }));
+  }
 
   const session = await getSession(); 
 
@@ -16,44 +43,36 @@ export default async function Home() {
 
   return (
     <>
-      <PageTitle titleText={mealPlans[0].Name}/>
       <div className="page-splitter">
         {/* Left side */}
         <div id="meal-plan-days" className="left">
-          <select id="meal-plan-selector">
-            {mealPlans.map((mealPlan, index) => {
-              return <option key={index} value={index}>
-                {mealPlan.Name}
-              </option>
-            })}
-          </select>
-
-          {mealPlans[0].Days.map((day, index) => {
-            return <div key={index} className="day">
-
-              <h1>{daysOfWeek[index]}</h1>
-              {Array.from(day.Meals.entries()).map(([mealTime, mealData], index) => {
-                return <MealListing mealTitle={mealData.name} mealTime={mealTime} key={index}/>
-              })}
-            </div>
-          })}
+          <h3>Your current selected meal plan:</h3>
+          <h2>{primaryMealPlan?.Name ?? ""}</h2>
+          {mealPlans.length > 0 
+            ? <MealPlanListView mealDataList={mealList.map(m => Meal.Serialize(m))} recipeDataList={recipes.map(r => Recipe.Serialize(r))}/>
+            : <div className="no-plan-message">
+                  <h2>You do not have any meal plans.</h2>
+                  <h2>Try creating one <a href="/mealplan/new" className="button">here</a></h2>
+              </div>
+          }
         </div>
+
         {/* Right side */}
         <div id="meal-plans" className="right">
           <h1>Meal Plans</h1>
           <div className="meal-plan-list">
             {mealPlans.map((mealPlan, index) => {
-              return <React.Fragment key={index}>
+              return <a key={index} href={`/mealplan/${mealPlan.MealPlanId}`}>
                 <div className="meal-plan">
                   <h2>{mealPlan.Name}</h2>
                   <h3>asdf</h3>
                 </div>
-                <hr/>
-              </React.Fragment>
+                {index != (mealPlans.length - 1) && <hr/>}
+              </a>
             })}
-            <div id="new-meal-plan-button">
-              <div></div>
-            </div>
+            <a id="new-meal-plan-button" href="/mealplan/new">
+              <div>New Meal Plan</div>
+            </a>
           </div>
         </div>
       </div>

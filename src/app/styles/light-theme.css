@@ -1,0 +1,48 @@
+
+/* --whatIsIt-whatIsItFor-modifier */
+
+:root {
+  
+  /* colors */
+  --color-highlight: #f5b951;
+  --color-highlight-60: rgba(245, 185, 81, 0.6);
+  --color-blue: #007cba;
+  --color-blue-60: #007cba99;
+  --color-blue-80: #007cbaCC;
+  
+
+  /*  bgs */
+  --bg-primary: white;
+  --bg-secondary: #f2f2f2;
+  --bg-navbar: #f6f8fa;
+
+  --bg-primary-hover: #f0f0f0;
+  --bg-secondary-hover: white;
+
+
+  /* borders */
+  --highlight-border-color: var(--color-highlight);
+  --highlight-border-color-60: var(--color-highlight-60);
+
+
+  /* text colors */
+  --color-text-primary: black;
+  --color-text-primary-60: rgba(0,0,0, 0.6);
+  --color-text-primary-40: rgba(0,0,0, 0.4);
+  --color-text-primary-20: rgba(0,0,0, 0.2);
+  --color-text-opposite: white;
+
+  
+  /* buttons */
+  --bg-buttonBg-primary: var(--color-blue);
+  --bg-buttonBg-primary-hover: var(--color-blue-80);
+  --bg-buttonBg-primary-disabled: var(--color-blue-60);
+  --color-buttonText-primary: var(--color-text-opposite);
+
+
+  /* icon colors */
+  /* https://codepen.io/sosuke/pen/Pjoqqp */
+  --filter-icon-primary: invert(55%) sepia(0%) saturate(1509%) hue-rotate(181deg) brightness(54%) contrast(81%);
+  --filter-icon-primary-hover: invert(72%) sepia(0%) saturate(19%) hue-rotate(174deg) brightness(87%) contrast(82%);
+  --icon-filter-highlight: invert(74%) sepia(31%) saturate(787%) hue-rotate(355deg) brightness(99%) contrast(94%);
+}

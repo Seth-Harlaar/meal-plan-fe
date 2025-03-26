@@ -29,25 +29,30 @@ export async function GET(request: NextRequest) {
     console.log('user loggin in:', user);
 
     if(!user){
-      user = new User(payload['given_name'], payload['family_name'], payload['email'], payload['sub']);
+      user = Object.assign(new User(), {
+        GoogleId: payload['sub'],
+        FirstName: payload['given_name'],
+        LastName: payload['family_name'],
+        Email: payload['email'],
+      });
       await user.SaveUser();
       console.log('created new', user);
-      if(user.UserId > 0){ 
+      if(user.UserId <= 0){
         throw new Error('Could not create new user');
       }
     }
 
-    const encodedKey = (new TextEncoder()).encode(process.env.JWT_SECRET);
+    // creat jwt
+    var token = jwt.sign({userSub: user.GoogleId}, process.env.JWT_SECRET);
 
-    const token = await new jose.SignJWT({userSub: user.GoogleId}) // details to  encode in the token
-        .setProtectedHeader({ alg: 'HS256' }) // algorithm
-        .setIssuedAt()
-        .setExpirationTime("1 hour") // token expiration time, e.g., "1 day"
-        .sign(encodedKey); // secretKey generated from previous step
-    console.log(token); // log token to console
-
-    let res = NextResponse.redirect(`${process.env.BASE_URL}/home`);
-    res.cookies.set('auth_token', token);
+    let res = NextResponse.redirect(`${process.env.BASE_URL}/auth-callback`);
+    res.cookies.set("auth_token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 12,
+    });
     return res;
 
   } catch (error) {
