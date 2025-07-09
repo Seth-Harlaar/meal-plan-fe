@@ -1,7 +1,9 @@
 import { User, UserSearchCriteria } from "@/models/User";
+import { RESPONSE_LIMIT_DEFAULT } from "next/dist/server/api-utils";
 import { NextRequest, NextResponse } from "next/server";
+import { Jwt } from "jsonwebtoken";
 const {google} = require('googleapis');
-import * as jose from 'jose'
+const jwt = require('jsonwebtoken');
 
 export async function GET(request: NextRequest) {
   const oauth2Client = new google.auth.OAuth2(
