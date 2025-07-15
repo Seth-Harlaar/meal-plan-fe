@@ -4,7 +4,7 @@ export async function GET() {
   const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_SECRET,
-    'http://localhost:3000/api/login/redirect',
+    `${process.env.BASE_URL}/api/login/redirect`,
   );
   
   // generate a url that asks permissions for Blogger and Google Calendar scopes
