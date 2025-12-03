@@ -42,8 +42,7 @@ export default async function Home() {
       <div className="page-splitter">
         {/* Left side */}
         <div id="meal-plan-days" className="left">
-          <h3>Your current selected meal plan:</h3>
-          <h2>{primaryMealPlan?.Name ?? ""}</h2>
+          <h2>{primaryMealPlan?.Name ?? "Your current meal plan"}</h2>
           {mealPlans.length > 0 
             ? <MealPlanListView mealDataList={mealList.map(m => Meal.Serialize(m))} recipeDataList={recipes.map(r => Recipe.Serialize(r))}/>
             : <div className="no-plan-message">
@@ -59,7 +58,7 @@ export default async function Home() {
           <div className="meal-plan-list">
             {mealPlans.map((mealPlan, index) => {
               return <a key={index} href={`/mealplan/${mealPlan.MealPlanId}`}>
-                <div className="meal-plan">
+                <div className={"meal-plan " + (mealPlan.MealPlanId == user.CurrentMealplanID ? " selected " : "")}>
                   <h2>{mealPlan.Name}</h2>
                   <h3>asdf</h3>
                 </div>

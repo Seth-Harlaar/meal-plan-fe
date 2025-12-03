@@ -59,7 +59,7 @@ body {
 }
 
 #content-wrapper {
-  max-width: 1800px;
+  max-width: 1400px;
   margin: auto;
   height: calc(100% - 80px);
   padding: 16px;

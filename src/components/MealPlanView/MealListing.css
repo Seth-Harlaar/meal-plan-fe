@@ -16,13 +16,7 @@
 }
 
 .day h1 {
-  font-size: 21pt;
-}
-
-@media only screen and (max-width: 500px) {
-  .day h1 {
-    font-size: 19pt;
-  }
+  font-size: 12pt;
 }
 
 .day hr {
@@ -100,7 +94,7 @@
 
 .meal .desc h3 {
   font-size: 12pt;
-  color: var(--color-text-60);
+  color: var(--color-text-primary-60);
 }
 
 @media only screen and (max-width: 500px) {

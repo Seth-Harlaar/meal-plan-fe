@@ -5,9 +5,14 @@ nav {
 
 nav > div {
   width: 100%;
+  background: var(--bg-navbar);
+}
+
+nav > div > .bar {
+  margin: auto;
+  max-width: 1460px;
   height: 80px;
   padding: 0 30px;
-  background: var(--bg-navbar);
   display: flex;
   align-items: center;
   gap: 16px;
@@ -73,6 +78,7 @@ nav .left {
   height: 100%;
   padding: 0;
   font-size: 21pt;
+  white-space: nowrap;
 }
 
 .nav-menu a {
