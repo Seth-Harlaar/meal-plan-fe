@@ -24,7 +24,6 @@ export default function MealPlanListView(
           const dayValue = DaysOfWeek[day as keyof typeof DaysOfWeek];
           const dayPassed = today > days.indexOf(day);
           return <div className={`day ${dayPassed ? "passed" : ""}`} key={dayIndex}>
-            <hr/>
             <h1>{day}</h1>
             {mealDataList.filter(m => m?.day_for == dayValue).map((mealData, index) => {
               let mealRecipe = recipeDataList.find(rd => rd.id == mealData.recipe_id) ?? {id: 0, name: "", instructions: "", prep_time: 0};

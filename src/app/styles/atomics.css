@@ -1,5 +1,11 @@
 
 
+.faded-60 { color: var(--color-text-primary-60) }
+.faded-40 { color: var(--color-text-primary-40) }
+.faded-20 { color: var(--color-text-primary-20) }
+
+
+
 .w-50 { width: 50px; }
 .w-100 { width: 100px; }
 .w-150 { width: 150px; }

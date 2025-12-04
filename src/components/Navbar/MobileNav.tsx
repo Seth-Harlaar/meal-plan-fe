@@ -12,18 +12,20 @@ export default function MobileNav({userLoggedIn} : {userLoggedIn: boolean}){
   return <>
   {/* the bar at the top */}
     <div className="mobile-only">
-      <div className="left">
-        <span onClick={openMenu}><HamburgerMenuIcon /></span>
-      </div>
-      <div>
-        <a href="/"><span>Meal Planner</span></a>
-      </div>
-      <div className="flex-spacer"></div>
-      <div className="right">
-        {userLoggedIn 
-          ? <a href='/api/logout'><span className='button'>Logout</span></a>
-          : <a href='/api/login'><span className='button'>Login</span></a>
-        }
+      <div className="bar">
+        <div className="left">
+          <span onClick={openMenu}><HamburgerMenuIcon /></span>
+        </div>
+        <div>
+          <a href="/"><span>Meal Planner</span></a>
+        </div>
+        <div className="flex-spacer"></div>
+        <div className="right">
+          {userLoggedIn 
+            ? <a href='/api/logout'><span className='button'>Logout</span></a>
+            : <a href='/api/login'><span className='button'>Login</span></a>
+          }
+        </div>
       </div>
     </div>
 

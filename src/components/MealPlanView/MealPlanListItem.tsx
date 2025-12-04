@@ -25,29 +25,29 @@ export default function MealPlanListItem(
   }
   return <div className="meal">
     <div className="meal-preview">
-      <img className="meal-image" src='https://potatorolls.com/wp-content/uploads/2020/10/Big-Tex_med.jpg'/>
       <div className="desc">
         <h2 className="title">{recipeData?.name}</h2>
-        <h3>{mealData == null ? "" : MealTimeAsString(mealData.time_for)}</h3>
+        <h3 className="faded-60">{mealData == null ? "" : MealTimeAsString(mealData.time_for)}</h3>
       </div>
     </div>
-    <hr />
-    <div className="buttons">
-      {editFunction && 
-        <IconButton onClick={editFunction} >
-          <EditIcon />
-        </IconButton>
-      }
-      {addMealFunction &&
-        <IconButton onClick={addMealFunction}>
-          <PlusIcon />
-        </IconButton>
-      }
-      {rerollFunction && 
-        <IconButton onClick={rerollFunction}>
-          <RefreshIcon/>
-        </IconButton>
-      }
-    </div>
+    {(rerollFunction || editFunction || addMealFunction) && 
+      <div className="buttons">
+        {editFunction && 
+          <IconButton onClick={editFunction} >
+            <EditIcon />
+          </IconButton>
+        }
+        {addMealFunction &&
+          <IconButton onClick={addMealFunction}>
+            <PlusIcon />
+          </IconButton>
+        }
+        {rerollFunction && 
+          <IconButton onClick={rerollFunction}>
+            <RefreshIcon/>
+          </IconButton>
+        }
+      </div>
+    }
   </div>
 }

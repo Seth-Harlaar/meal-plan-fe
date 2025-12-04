@@ -93,9 +93,7 @@ export default function MealPlanEditView(
       <div className="button-row">
         <div className="button" onClick={openEditDetailsModal}>Edit Details</div>
         {changesMade && 
-          <div className="content-right">
-            <span className={`button ${waiting ? "disabled" : ""}`} onClick={handleSaveChangesClick}>Save Changes</span>
-          </div>
+          <div className={`button ${waiting ? "disabled" : ""}`} onClick={handleSaveChangesClick}>Save Changes</div>
         }
       </div>
       {Object.keys(DaysOfWeek)
@@ -103,7 +101,6 @@ export default function MealPlanEditView(
         .map((day, dayIndex) => {
           const dayValue = DaysOfWeek[day as keyof typeof DaysOfWeek];
           return <div className="day" key={dayIndex}>
-            <hr/>
             <h1>{day}</h1>
             {meals.filter(m => m?.day_for == dayValue).length == 0 &&
               <div className="meal empty-meal" onClick={() => addRandomMealToDay(dayValue)}>

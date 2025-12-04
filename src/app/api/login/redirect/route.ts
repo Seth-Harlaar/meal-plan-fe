@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
     // get google auth response
     const params = request.nextUrl.searchParams;
     const code = params.get('code')
+    console.log(code);
     const {tokens} = await oauth2Client.getToken(code);
     const ticket = await oauth2Client.verifyIdToken({
       idToken: tokens.id_token,

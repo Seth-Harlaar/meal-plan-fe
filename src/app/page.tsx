@@ -42,35 +42,38 @@ export default async function Home() {
       <div className="page-splitter">
         {/* Left side */}
         <div id="meal-plan-days" className="left">
-          <h3>Your current selected meal plan:</h3>
-          <h2>{primaryMealPlan?.Name ?? ""}</h2>
           {mealPlans.length > 0 
-            ? <MealPlanListView mealDataList={mealList.map(m => Meal.Serialize(m))} recipeDataList={recipes.map(r => Recipe.Serialize(r))}/>
-            : <div className="no-plan-message">
+            ? <div>
+                <h2>{primaryMealPlan?.Name ?? "Your current meal plan"}</h2>
+                <MealPlanListView mealDataList={mealList.map(m => Meal.Serialize(m))} recipeDataList={recipes.map(r => Recipe.Serialize(r))}/>
+              </div>
+            : <span className="no-plan-message message-with-buttons">
                   <h2>You do not have any meal plans.</h2>
                   <h2>Try creating one <a href="/mealplan/new" className="button">here</a></h2>
-              </div>
+              </span>
           }
         </div>
 
         {/* Right side */}
-        <div id="meal-plans" className="right">
-          <h1>Meal Plans</h1>
-          <div className="meal-plan-list">
-            {mealPlans.map((mealPlan, index) => {
-              return <a key={index} href={`/mealplan/${mealPlan.MealPlanId}`}>
-                <div className="meal-plan">
-                  <h2>{mealPlan.Name}</h2>
-                  <h3>asdf</h3>
-                </div>
-                {index != (mealPlans.length - 1) && <hr/>}
+        {mealPlans.length > 0 && 
+          <div id="meal-plans" className="right">
+            <h1>Meal Plans</h1>
+            <div className="meal-plan-list">
+              {mealPlans.map((mealPlan, index) => {
+                return <a key={index} href={`/mealplan/${mealPlan.MealPlanId}`}>
+                  <div className={"meal-plan " + (mealPlan.MealPlanId == user.CurrentMealplanID ? " selected " : "")}>
+                    <h2>{mealPlan.Name}</h2>
+                    <h3>asdf</h3>
+                  </div>
+                  {index != (mealPlans.length - 1) && <hr/>}
+                </a>
+              })}
+              <a id="new-meal-plan-button" href="/mealplan/new">
+                <div>New Meal Plan</div>
               </a>
-            })}
-            <a id="new-meal-plan-button" href="/mealplan/new">
-              <div>New Meal Plan</div>
-            </a>
+            </div>
           </div>
-        </div>
+        }
       </div>
     </>
   );
