@@ -4,6 +4,11 @@
   gap: 16px;
   max-height: calc(100% - var(--page-title-height));
   overflow-y: hidden;
+  height: 100%;
+}
+
+.page-splitter > div {
+  height: 100%;
 }
 
 .page-splitter .left {
@@ -112,4 +117,9 @@
 
 #new-meal-plan-button:hover div {
   color: var(--color-text-primary-60);
+}
+
+
+.no-plan-message {
+  text-align: center;
 }

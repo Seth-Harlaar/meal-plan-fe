@@ -2,6 +2,7 @@
 
 :root {
 
+  --border-radius-xsmall: 3px;
   --border-radius-small: 5px;
 
 }

@@ -30,23 +30,24 @@ export default function MealPlanListItem(
         <h3 className="faded-60">{mealData == null ? "" : MealTimeAsString(mealData.time_for)}</h3>
       </div>
     </div>
-    <hr />
-    <div className="buttons">
-      {editFunction && 
-        <IconButton onClick={editFunction} >
-          <EditIcon />
-        </IconButton>
-      }
-      {addMealFunction &&
-        <IconButton onClick={addMealFunction}>
-          <PlusIcon />
-        </IconButton>
-      }
-      {rerollFunction && 
-        <IconButton onClick={rerollFunction}>
-          <RefreshIcon/>
-        </IconButton>
-      }
-    </div>
+    {(rerollFunction || editFunction || addMealFunction) && 
+      <div className="buttons">
+        {editFunction && 
+          <IconButton onClick={editFunction} >
+            <EditIcon />
+          </IconButton>
+        }
+        {addMealFunction &&
+          <IconButton onClick={addMealFunction}>
+            <PlusIcon />
+          </IconButton>
+        }
+        {rerollFunction && 
+          <IconButton onClick={rerollFunction}>
+            <RefreshIcon/>
+          </IconButton>
+        }
+      </div>
+    }
   </div>
 }

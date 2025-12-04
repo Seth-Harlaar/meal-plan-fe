@@ -68,7 +68,7 @@ body {
 
 #page-title h1 {
   font-size: 16pt;
-  height: var(--page-title-height);
+  min-height: var(--page-title-height);
 }
 
 .flex-spacer {
@@ -78,4 +78,11 @@ body {
 /* layouts */
 .max-width-1000 {
   max-width: 1000px;
+}
+
+
+
+/* Util */
+.message-with-buttons {
+  line-height: 50px;
 }

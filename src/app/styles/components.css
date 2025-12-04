@@ -1,8 +1,8 @@
 
 /* buttons */
-a:has(.button){
+a:has(.button), a.button {
   text-decoration: none;
-  color: var(--color-text-primary);
+  color: var(--color-buttonText-primary);
 }
 
 button.button {

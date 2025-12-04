@@ -20,6 +20,11 @@
   height: 32px;
   width: 32px;
   cursor: pointer;
+  background-color: var(--bg-primary);
+  border-radius: var(--border-radius-xsmall);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #modal {
