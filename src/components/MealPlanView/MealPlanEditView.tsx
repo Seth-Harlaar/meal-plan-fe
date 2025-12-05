@@ -33,27 +33,22 @@ export default function MealPlanEditView(
     setRecipes(recipeList => [...recipeList, recipeData]);
   }
 
-  function updateMeal(mealData: MealResultType){
-    let meal = meals.find(m => m.id == mealData.id);
-    if(!meal)
-      return;
-
-    let mealIndex = meals.indexOf(meal);
+  function updateMeal(mealData: MealResultType, mealIndex: number){
     let newMealList = [...meals];
     newMealList[mealIndex] = mealData;
     setMeals(newMealList);
     setChangesMade(true);
   }
 
-  function rerollRecipe(mealData: MealResultType) {
+  function rerollRecipe(mealData: MealResultType, mealIndex: number) {
     const randomRecipe = recipes[Math.floor(Math.random() * recipes.length) + 1];
     mealData.recipe_id = randomRecipe.id;
-    updateMeal(mealData);
+    updateMeal(mealData, mealIndex);
     setChangesMade(true);
   }
 
-  function openEditMealModal(mealData: MealResultType){
-    openModal(<EditMealPopup mealData={mealData} recipeDataList={recipes} 
+  function openEditMealModal(mealData: MealResultType, mealIndex: number){
+    openModal(<EditMealPopup mealData={mealData} mealIndex={mealIndex} recipeDataList={recipes} 
       updateMeal={updateMeal} addRecipeToData={addRecipe}/>);
   }
 
@@ -108,9 +103,10 @@ export default function MealPlanEditView(
               </div>
             }
             {meals.filter(m => m?.day_for == dayValue).map((mealData, index) => {
+              let mealIndex = meals.indexOf(mealData);
               let mealRecipe = recipes.find(rd => rd.id == mealData.recipe_id) ?? {id: 0, name: "", instructions: "", prep_time: 0};
               return <MealPlanListItem mealData={mealData} recipeData={mealRecipe} key={index}
-                rerollFunction={() => rerollRecipe(mealData)} editFunction={() => openEditMealModal(mealData)} 
+                rerollFunction={() => rerollRecipe(mealData, mealIndex)} editFunction={() => openEditMealModal(mealData, mealIndex)} 
                 addMealFunction={() => addRandomMealToDay(dayValue)}
                 />
             })}

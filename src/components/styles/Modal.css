@@ -45,5 +45,11 @@
   #modal-exit {
     top: 16px;
     right: 16px;
+    background: none;
+    z-index: 1;
   }
+}
+
+#modal .title h1 {
+  font-size: 1em;
 }

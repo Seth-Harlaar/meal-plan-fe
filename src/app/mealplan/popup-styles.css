@@ -6,6 +6,10 @@
   gap: 12px;
 }
 
+#edit-meal-popup > div {
+  flex: 1;
+  min-width: 250px;
+}
 
 #edit-meal-popup .left {
   display: flex;

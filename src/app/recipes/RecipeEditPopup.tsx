@@ -44,22 +44,29 @@ export default function RecipeEditPopup(
 
   return (
     <div className="recipe-details">
-      <h2>Editting Recipe:</h2>
-      <h1>{recipeData.name}</h1>
+      <div className="title">
+        <h1>{recipeData.name}</h1>
+      </div>
       
       <div className="input-container">
         <div className="label">Name:</div>
         <input value={recipeName} type="text" onChange={(e) => {setRecipeName(e.target.value); setChangesMade(true)}} className="input" />
       </div>
       
-      Prep Time:
-      <input value={prepTime} type="text" onChange={(e) => {setPrepTime(e.target.value); setChangesMade(true)}} />
+      <div className="input-container">
+        <div className="label">Prep Time:</div>
+        <input value={prepTime} type="text" onChange={(e) => {setPrepTime(e.target.value); setChangesMade(true)}} />
+      </div>
       
-      <h2> Ingredients </h2>
-      <h4>Nothing here yet</h4>
+      <div className="input-container">
+        <div className="label">Ingredients:</div>
+        <div className="coming-soon">Coming soon</div>
+      </div>
       
-      <h2> Instructions </h2>
-      <textarea value={recipeInstructions} onChange={(e) => {setRecipeInstructions(e.target.value); setChangesMade(true)}} rows={5} />
+      <div className="input-container">
+        <div className="label">Instructions:</div>
+        <textarea value={recipeInstructions} onChange={(e) => {setRecipeInstructions(e.target.value); setChangesMade(true)}} rows={5} />
+      </div>
       
       {changesMade && 
         <div className="content-right">

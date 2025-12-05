@@ -111,6 +111,25 @@ span.icon-container {
 
 
 /* inputs */
+input, textarea, select {
+  padding: 4px 6px;
+  border-radius: var(--border-radius-small);
+  border: 1px solid var(--color-text-primary-60);
+  width: 100%;
+  font-size: 14pt;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.input-container .label {
+  color: var(--color-text-primary-60);
+  font-size: .8em;
+}
+
 .search-bar .label {
   font-size: 1rem;
   margin-bottom: 4px;
@@ -123,6 +142,4 @@ span.icon-container {
 .search-bar > input {
   height: 3em;
   width: 100%;
-  border-radius: var(--border-radius-small);
-  border: 1px solid var(--color-text-primary-60);
 }

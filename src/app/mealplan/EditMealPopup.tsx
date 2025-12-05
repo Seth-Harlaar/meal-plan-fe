@@ -9,11 +9,12 @@ import { MealTime, MealTimeAsString } from "@/models/enums/MealTime";
 import './popup-styles.css';
 
 export default function EditMealPopup(
-  {mealData, recipeDataList, updateMeal, addRecipeToData}: 
+  {mealData, mealIndex, recipeDataList, updateMeal, addRecipeToData}: 
   {
     mealData: MealResultType,
+    mealIndex: number,
     recipeDataList: RecipeResultType[],
-    updateMeal: (mealData: MealResultType) => void,
+    updateMeal: (mealData: MealResultType, mealIndex: number) => void,
     addRecipeToData: (recipeData: RecipeResultType) => void,
   }
 ){
@@ -54,7 +55,7 @@ export default function EditMealPopup(
           mealData.recipe_id = newRecipe.id;
           mealData.day_for = mealDay;
           mealData.time_for = mealTime;
-          updateMeal(mealData);
+          updateMeal(mealData, mealIndex);
           closeModal();
         }
       });
@@ -62,7 +63,7 @@ export default function EditMealPopup(
       mealData.recipe_id = selectedRecipeId;
       mealData.day_for = mealDay;
       mealData.time_for = mealTime;
-      updateMeal(mealData);
+      updateMeal(mealData, mealIndex);
     }
 
     closeModal();
@@ -70,32 +71,36 @@ export default function EditMealPopup(
 
   return <div id="edit-meal-popup">
     <div className="left">
-      <h1>Change recipe</h1>
-      <div>
-        <select onChange={(e) => setSelectedRecipeId(Number(e.target.value))} defaultValue={mealData.recipe_id}>
-          <option value="-1">Select a recipe</option>
-          {recipeDataList.map((r, index) => {
-            return <option value={r.id} key={index}>{r.name}</option>
-          })}
-        </select>
+      <h2 className="label">Recipe</h2>
+      <div className="input-container">
+        <div>
+          <select onChange={(e) => setSelectedRecipeId(Number(e.target.value))} defaultValue={mealData.recipe_id}>
+            <option value="-1">Select a recipe</option>
+            {recipeDataList.map((r, index) => {
+              return <option value={r.id} key={index}>{r.name}</option>
+            })}
+          </select>
+        </div>
       </div>
-
       <h4>Or</h4>
-      <h1>Create a new recipe</h1>
       <div>
-        <h3>Recipe Name:</h3>
-        <input type="text" onChange={(e) => setRecipeTitle(e.target.value)}/>
-        <h3>Recipe instructions:</h3>
-        <input type="text" onChange={(e) => setRecipeInstructions(e.target.value)}/>
+        <div className="input-container">
+          <h3 className="label">New Recipe Name:</h3>
+          <input type="text" onChange={(e) => setRecipeTitle(e.target.value)}/>
+        </div>
+        <div className="input-container">
+          <h3 className="label">New Recipe instructions:</h3>
+          <input type="text" onChange={(e) => setRecipeInstructions(e.target.value)}/>
+        </div>
       </div>
     </div>
 
     <hr className="divider"/>
 
     <div className="right">
-      <h1>Edit meal details</h1>
-      <div>
-        <h3>Meal day:</h3>
+      <h2>Meal details</h2>
+      <div className="input-container">
+        <h3 className="label">Meal day:</h3>
         <select onChange={(e) => setMealDay(parseInt(e.target.value))} defaultValue={mealData.day_for}>
           {Object.keys(DaysOfWeek)
             .filter((key) => isNaN(Number(key)))
@@ -106,8 +111,8 @@ export default function EditMealPopup(
         </select>
       </div>
       
-      <div>
-        <h3>Time for:</h3>
+      <div className="input-container">
+        <h3 className="label">Time for:</h3>
         <select onChange={(e) => setMealTime(parseInt(e.target.value))} defaultValue={mealData.time_for}>
           {Object.entries(MealTime)
             .filter(([key, value]) => isNaN(Number(key))) // Ensure keys are valid strings
@@ -118,7 +123,6 @@ export default function EditMealPopup(
             ))}
         </select>
       </div>
-      {changesMade ? "yes" : "no"}
       <button className={`button`} disabled={!changesMade} onClick={() => handleSaveChangesClick()}>Save Changes</button>
     </div>
   </div>

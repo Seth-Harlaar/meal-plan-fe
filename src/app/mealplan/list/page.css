@@ -12,8 +12,31 @@
   color: var(--color-text-primary-60);
 }
 
+.card-subtitle {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 #share-plan-popup {
   min-width: 300px;
   max-width: 400px;
+}
+
+#new-meal-plan-button {
+  background: none;
+  padding: 8px;
+  border: 2px dashed var(--color-text-primary-40);
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+#new-meal-plan-button:hover {
+  background: var(--bg-primary-hover);
 }

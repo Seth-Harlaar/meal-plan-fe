@@ -23,6 +23,8 @@
 .w-750 { width: 750px; }
 .w-800 { width: 800px; }
 
+.w-100p { width: 100%; }
+
 .mobile-only {
   @media only screen and (min-width: 801px){
     display: none;

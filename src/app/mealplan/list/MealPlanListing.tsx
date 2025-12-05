@@ -45,31 +45,34 @@ export default function MealPlanListing(
         const recipeString = `${recipes.map(r => r.name).join(', ')}`;
 
         return <div className="card mealplan-card" key={index}>
-            <div className="card-title">
-              <h1>{mealplan.name}</h1>
-              {isPrimary && 
-                <StarIcon />
-              }
-            </div>
-            <h3 className="card-subtitle">Meals: {recipeString}</h3>
-            <div className="flex-spacer" />
-            <hr />
-            <div className="card-buttons">
-              <IconButton onClick={() => {handleDeleteClick(mealplan.id)}}>
-                <XIcon />
-              </IconButton>
-              <IconButton onClick={() => handleMealCardClick(mealplan.id)}>
-                <StarIcon />
-              </IconButton>
-              <IconButton onClick={() => handleShareClick(mealplan)}>
-                <ShareIcon/>
-              </IconButton>
-              <LinkWrapper href={`/mealplan/${mealplan.id}`}>
-                <ArrowIcon />
-              </LinkWrapper>
-            </div>
+          <div className="card-title">
+            <h1>{mealplan.name}</h1>
+            {isPrimary && 
+              <StarIcon />
+            }
           </div>
+          <h3 className="card-subtitle">Meals: {recipeString}</h3>
+          <div className="flex-spacer" />
+          <hr />
+          <div className="card-buttons">
+            <IconButton onClick={() => {handleDeleteClick(mealplan.id)}}>
+              <XIcon />
+            </IconButton>
+            <IconButton onClick={() => handleMealCardClick(mealplan.id)}>
+              <StarIcon />
+            </IconButton>
+            <IconButton onClick={() => handleShareClick(mealplan)}>
+              <ShareIcon/>
+            </IconButton>
+            <LinkWrapper href={`/mealplan/${mealplan.id}`}>
+              <ArrowIcon />
+            </LinkWrapper>
+          </div>
+        </div>
       })}
+      <a id="new-meal-plan-button" className="card" href="/mealplan/new">
+        <div>New Meal Plan</div>
+      </a>
     </>
   );
 }

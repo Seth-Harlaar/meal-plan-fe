@@ -1,11 +1,16 @@
 
 
-
 .recipe-details {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
+
+.coming-soon {
+  font-size: 12pt;
+  color: var(--color-text-primary-40)
+}
+
 
 @media only screen and (min-width: 801px){
   .recipe-details {

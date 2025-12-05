@@ -26,8 +26,9 @@ export default function EditMealPlanPopup(
 
   return (
     <div id='edit-mealplan-popup'>
-      <h2>Editting Recipe:</h2>
-      <h1>{mealPlan.name}</h1>
+      <div className="title">
+        <h1>{mealPlan.name}</h1>
+      </div>
 
       {changesMade && 
         <div className="content-right">

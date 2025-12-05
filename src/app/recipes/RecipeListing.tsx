@@ -6,6 +6,8 @@ import { useContext, useEffect, useState } from "react";
 import RecipeDetailsPopup from "./RecipeDetailsPopup";
 import RecipeEditPopup from "./RecipeEditPopup";
 
+import './page.css';
+
 export default function RecipeListing(
   {RecipeData}:
   {RecipeData: RecipeResultType[]}
@@ -31,7 +33,7 @@ export default function RecipeListing(
         <input type="text" onChange={e => setSearchText(e.target.value)} />
       </div>
 
-      <div className="cards-box cards-small">
+      <div className="cards-box cards-small recipe-list">
         {recipes.map((recipe, index) => {
           return <div className="card" key={index} onClick={() => {OpenRecipeDetails(recipe)}}>
               {recipe.name}
