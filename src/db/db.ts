@@ -7,7 +7,7 @@ export class Database {
 
   static async getPool() {
     if (!Database.pool) {
-      Database.pool = await createPool(`postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_BASE_URL}/${process.env.DB_NAME}?sslmode=require`);
+      Database.pool = await createPool(`postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_BASE_URL}/${process.env.DB_NAME}`);
     }
     return Database.pool;
   }

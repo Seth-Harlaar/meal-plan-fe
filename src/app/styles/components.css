@@ -108,3 +108,21 @@ span.icon-container {
   justify-content: end;
   gap: 8px;
 }
+
+
+/* inputs */
+.search-bar .label {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.search-bar {
+  padding: 12px 4px;
+}
+
+.search-bar > input {
+  height: 3em;
+  width: 100%;
+  border-radius: var(--border-radius-small);
+  border: 1px solid var(--color-text-primary-60);
+}

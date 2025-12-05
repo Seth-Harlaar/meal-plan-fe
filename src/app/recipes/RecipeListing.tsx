@@ -26,7 +26,10 @@ export default function RecipeListing(
 
   return (
     <>
-      <input type="text" onChange={e => setSearchText(e.target.value)} />
+      <div className="search-bar">
+        <h1 className="label">Search:</h1>
+        <input type="text" onChange={e => setSearchText(e.target.value)} />
+      </div>
 
       <div className="cards-box cards-small">
         {recipes.map((recipe, index) => {
